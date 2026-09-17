@@ -80,19 +80,20 @@ module.exports = async function handler(req, res) {
       return res.status(response.status || 500).json({ ok: false, error: String(message), raw: data });
     }
 
-    const qrCode = data && (data.qr_code || data.pix_code || data.pixCode);
-    const qrBase64 = data && (data.qr_code_base64 || data.qrCodeBase64);
+    const responseData = data && data.data ? data.data : data;
+    const qrCode = responseData && (responseData.qr_code || responseData.pix_code || responseData.pixCode);
+    const qrBase64 = responseData && (responseData.qr_code_base64 || responseData.qrCodeBase64 || responseData.pix_qr_code_base64);
     const status = (data && (data.status || data.transaction_status)) || 'pending';
 
     return res.status(200).json({
       ok: true,
       status,
       reference,
-      transaction_id: data && (data.transaction_id || data.id),
+      transaction_id: responseData && (responseData.transaction_id || responseData.id),
       qr_code: qrCode || '',
       qr_code_base64: qrBase64 || '',
       amount,
-      expires_at: data && data.expires_at,
+      expires_at: responseData && responseData.expires_at,
       raw: data
     });
   } catch (error) {

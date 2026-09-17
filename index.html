@@ -160,7 +160,7 @@
 		#modalCompra .modalCompra-subtotal .linha { display: flex; justify-content: space-between; gap: 8px; margin: 4px 0; }
 		#modalCompra .modalCompra-subtotal .linha strong { color: #fff; }
 		#modalCompra .modalCompra-subtotal .tempo { margin-top: 8px; padding-top: 8px; border-top: 1px solid #303439; color: #b5f0cb; }
-		#modalCompra .modalCompra-pix-box { display: none; margin: 10px 0 16px; padding: 12px; border: 1px solid #20c96b; border-radius: 12px; background: #0f1d16; }
+		#modalCompra .modalCompra-pix-box { position: relative; z-index: 2; display: none; margin: 10px 0 16px; padding: 12px; border: 1px solid #20c96b; border-radius: 12px; background: #0f1d16; }
 		#modalCompra .modalCompra-pix-box.mostrar { display: block; }
 		#modalCompra .modalCompra-pix-qrcode { display: flex; align-items: center; justify-content: center; min-height: 180px; margin-bottom: 10px; padding: 8px; border: 1px solid #303439; border-radius: 10px; background: #fff; }
 		#modalCompra .modalCompra-pix-qrcode img { max-width: 180px; max-height: 180px; }
@@ -1411,11 +1411,21 @@
 					const qr = document.getElementById('modalCompraPixQr');
 					const copia = document.getElementById('modalCompraPixCopia');
 					if (box) box.classList.add('mostrar');
+					const codigoPix = dados.qr_code || dados.pix_code || '';
+					const imagemQr = dados.qr_code_base64 || dados.pix_qr_code_base64 || '';
 					if (qr) {
-						if (dados.qr_code_base64) qr.innerHTML = '<img src="' + dados.qr_code_base64 + '" alt="QR Code Pix">';
-						else if (dados.qr_code) qr.textContent = dados.qr_code;
+						if (imagemQr) {
+							const src = imagemQr.indexOf('data:image') === 0 ? imagemQr : 'data:image/png;base64,' + imagemQr;
+							qr.innerHTML = '<img src="' + src + '" alt="QR Code Pix">';
+						} else if (codigoPix) {
+							qr.innerHTML = '<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(codigoPix) + '" alt="QR Code Pix">';
+						} else {
+							qr.textContent = 'O gateway não retornou o QR Code. Copie o código Pix abaixo.';
+						}
 					}
-					if (copia) copia.textContent = dados.qr_code || 'Código Pix gerado.';
+					if (copia) copia.textContent = codigoPix || 'Código Pix não retornado pela operadora.';
+					if (!codigoPix) throw new Error('A operadora não retornou o código Pix. Tente gerar novamente.');
+					if (box) box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 					document.getElementById('modalCompraPixCopiar').addEventListener('click', async function () {
 						const codigo = dados.qr_code || 'Código Pix indisponível';
 						try { await navigator.clipboard.writeText(codigo); }
@@ -1434,9 +1444,6 @@
 							console.warn('Polling Pix falhou', error);
 						}
 					}, 5000);
-					if (typeof Swal !== 'undefined' && Swal.fire) {
-						Swal.fire({ title: 'Pix gerado com sucesso!', text: 'Escaneie o QR Code ou copie o código para pagar.', icon: 'success', confirmButtonText: 'OK' });
-					}
 				} catch (error) {
 					if (typeof Swal !== 'undefined' && Swal.fire) {
 						Swal.fire({ title: 'Erro ao gerar Pix', text: error.message || 'Tente novamente.', icon: 'error', confirmButtonText: 'OK' });
