@@ -1414,11 +1414,27 @@
 					const codigoPix = dados.qr_code || dados.pix_code || '';
 					const imagemQr = dados.qr_code_base64 || dados.pix_qr_code_base64 || '';
 					if (qr) {
-						if (imagemQr) {
-							const src = imagemQr.indexOf('data:image') === 0 ? imagemQr : 'data:image/png;base64,' + imagemQr;
-							qr.innerHTML = '<img src="' + src + '" alt="QR Code Pix">';
-						} else if (codigoPix) {
-							qr.innerHTML = '<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(codigoPix) + '" alt="QR Code Pix">';
+						qr.innerHTML = '';
+						if (codigoPix) {
+							const imagemFallback = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(codigoPix);
+							const imagem = document.createElement('img');
+							let tentouFallback = false;
+							imagem.alt = 'QR Code Pix';
+							imagem.addEventListener('error', function () {
+								if (!tentouFallback && imagem.src !== imagemFallback) {
+									tentouFallback = true;
+									imagem.src = imagemFallback;
+									return;
+								}
+								qr.textContent = 'Não foi possível carregar a imagem. Use o código Pix abaixo.';
+							});
+							qr.appendChild(imagem);
+							if (imagemQr) {
+								const src = imagemQr.indexOf('data:image') === 0 ? imagemQr : 'data:image/png;base64,' + imagemQr;
+								imagem.src = src;
+							} else {
+								imagem.src = imagemFallback;
+							}
 						} else {
 							qr.textContent = 'O gateway não retornou o QR Code. Copie o código Pix abaixo.';
 						}
