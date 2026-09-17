@@ -166,6 +166,8 @@
 		#modalCompra .modalCompra-pix-qrcode img { max-width: 180px; max-height: 180px; }
 		#modalCompra .modalCompra-pix-copia { margin: 0 0 10px; padding: 8px 10px; border: 1px solid #303439; border-radius: 8px; background: #191c20; color: #f4f4f4; word-break: break-all; font-size: 12px; line-height: 1.5; }
 		#modalCompra .modalCompra-botao-copia { width: 100%; margin-top: 8px; height: 38px; border: 0; border-radius: 12px; background: #20c96b; color: #07130b; font-weight: 800; cursor: pointer; }
+		#modalCompra .modalCompra-aviso-copia { display: none; margin: 8px 0 0; color: #b5f0cb; font-size: 12px; font-weight: 700; text-align: center; }
+		#modalCompra .modalCompra-aviso-copia.mostrar { display: block; }
 		#modalCompra .modalCompra-enviar { width: 100%; height: 48px; border: 0; border-radius: 24px; background: #20c96b; color: #07130b; font-weight: 800; cursor: pointer; }
 		#modalCompra .modalCompra-enviar:hover { background: #29df78; }
 		@media (min-width: 600px) { #modalCompra { padding: 4px 12px; } #modalCompra .modalCompra-conteudo { border: 1px solid #33383d; } }
@@ -1077,7 +1079,7 @@
 					<label for="modalReferencia">Ponto de referência</label><input id="modalReferencia" type="text" placeholder="Próximo a... (opcional)">
 					<div class="modalCompra-entrega"><label>Tipo de entrega</label><label class="modalCompra-entrega-opcao"><input type="radio" name="modalEntrega" value="grátis" checked> Entrega grátis - 28 a 48 minutos</label><label class="modalCompra-entrega-opcao"><input type="radio" name="modalEntrega" value="expressa"> Entrega expressa - 15 a 30 minutos<strong>+ R$ 5,90</strong></label></div>
 				</form>
-				<footer class="modalCompra-rodape"><label>Forma de pagamento</label><div class="modalCompra-pix">Pix</div><div class="modalCompra-total"><span>Total</span><strong id="modalCompraTotal">R$ 0,00</strong></div><div id="modalCompraSubtotal" class="modalCompra-subtotal" aria-live="polite"></div><div id="modalCompraPixBox" class="modalCompra-pix-box" aria-live="polite"><div class="modalCompra-pix-qrcode" id="modalCompraPixQr"></div><div class="modalCompra-pix-copia" id="modalCompraPixCopia"></div><button class="modalCompra-botao-copia" id="modalCompraPixCopiar" type="button">Copiar código Pix</button></div><button class="modalCompra-enviar" type="submit" form="formModalCompra">Pagar com Pix</button></footer>
+				<footer class="modalCompra-rodape"><label>Forma de pagamento</label><div class="modalCompra-pix">Pix</div><div class="modalCompra-total"><span>Total</span><strong id="modalCompraTotal">R$ 0,00</strong></div><div id="modalCompraSubtotal" class="modalCompra-subtotal" aria-live="polite"></div><div id="modalCompraPixBox" class="modalCompra-pix-box" aria-live="polite"><div class="modalCompra-pix-qrcode" id="modalCompraPixQr"></div><div class="modalCompra-pix-copia" id="modalCompraPixCopia"></div><button class="modalCompra-botao-copia" id="modalCompraPixCopiar" type="button">Copiar código Pix</button><div id="modalCompraAvisoCopia" class="modalCompra-aviso-copia" role="status" aria-live="polite"></div></div><button class="modalCompra-enviar" type="submit" form="formModalCompra">Pagar com Pix</button></footer>
 			</section>
 		</div>
 		<div id="info">
@@ -1443,9 +1445,22 @@
 					if (!codigoPix) throw new Error('A operadora não retornou o código Pix. Tente gerar novamente.');
 					if (box) box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 					document.getElementById('modalCompraPixCopiar').addEventListener('click', async function () {
-						const codigo = dados.qr_code || 'Código Pix indisponível';
-						try { await navigator.clipboard.writeText(codigo); }
-						catch (error) { console.warn('Clipboard não disponível', error); }
+						const codigo = dados.qr_code || dados.pix_code || '';
+						const aviso = document.getElementById('modalCompraAvisoCopia');
+						try {
+							await navigator.clipboard.writeText(codigo);
+							if (aviso) {
+								aviso.textContent = 'Código Pix copiado!';
+								aviso.classList.add('mostrar');
+							}
+							this.textContent = 'Código copiado';
+							window.setTimeout(() => { this.textContent = 'Copiar código Pix'; }, 2500);
+						} catch (error) {
+							if (aviso) {
+								aviso.textContent = 'Não foi possível copiar automaticamente. Selecione o código acima.';
+								aviso.classList.add('mostrar');
+							}
+						}
 					});
 					const polling = setInterval(async () => {
 						try {
