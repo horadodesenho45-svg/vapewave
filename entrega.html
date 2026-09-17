@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Acompanhe sua entrega | Vapewave</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+	<style>
+		:root { --green: #028b49; --green-dark: #006a39; --ink: #17231e; --muted: #748078; --line: #e0e9e3; --orange: #ff7a21; }
+		* { box-sizing: border-box; }
+		body { margin: 0; min-height: 100vh; color: var(--ink); background: #f1f6f2; font-family: "DM Sans", sans-serif; }
+		button { font: inherit; }
+		.topbar { height: 68px; display: flex; align-items: center; justify-content: space-between; padding: 0 max(22px, calc((100% - 1060px) / 2)); background: #fff; border-bottom: 1px solid var(--line); }
+		.brand { color: var(--green); font-family: "Space Grotesk", sans-serif; font-size: 19px; font-weight: 700; letter-spacing: -.03em; }
+		.order-tag { color: var(--muted); font-size: 12px; }
+		.page { width: min(100% - 36px, 760px); margin: 0 auto; padding: 48px 0 60px; }
+		.intro { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 20px; }
+		.eyebrow { color: var(--green); font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+		h1 { margin: 6px 0 0; font-family: "Space Grotesk", sans-serif; font-size: clamp(28px, 5vw, 40px); letter-spacing: -.045em; line-height: 1; }
+		.eta { color: var(--green); text-align: right; font-size: 12px; font-weight: 600; }
+		.eta strong { display: block; font-family: "Space Grotesk", sans-serif; font-size: 34px; line-height: 1; }
+		.upsell-offer { display: grid; grid-template-columns: 74px minmax(0, 1fr) auto; align-items: center; gap: 11px; width: 100%; margin: 0 0 20px; padding: 9px; border: 1px solid #d9dfe1; border-radius: 12px; background: #151819; color: #fff; }
+		.upsell-offer img { width: 74px; height: 74px; border-radius: 8px; background: #fff; object-fit: cover; }
+		.upsell-copy { min-width: 0; }
+		.upsell-kicker { display: block; margin-bottom: 2px; color: #ffb15c; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+		.upsell-copy strong { display: block; font-size: 15px; }
+		.upsell-copy span { display: block; margin-top: 3px; color: #c9ced0; font-size: 13px; line-height: 1.3; }
+		.upsell-benefit { margin-top: 6px !important; color: #fff !important; font-weight: 700; }
+		.upsell-gift { margin-top: 2px !important; color: #d7d9da !important; font-style: italic; font-weight: 700; }
+		.upsell-price { display: block; margin-top: 5px; color: #20c96b !important; font-size: 14px !important; font-weight: 700; }
+		.upsell-price s { color: #ff4d4d; }
+		.upsell-action { text-align: center; }
+		.upsell-timer { display: block; margin-bottom: 5px; color: #20c96b; font-family: "Space Grotesk", sans-serif; font-size: 20px; font-weight: 700; }
+		.upsell-button { padding: 8px 10px; border: 0; border-radius: 7px; color: #fff; background: #20c96b; cursor: pointer; font-size: 12px; font-weight: 700; }
+		.upsell-button:hover { background: #29df78; }
+		.upsell-offer.encerrada { display: none; }
+		.upsell-offer.expandida { grid-template-columns: 74px minmax(0, 1fr) auto; }
+		.upsell-pix { display: none; grid-column: 1 / -1; gap: 12px; align-items: center; padding-top: 12px; border-top: 1px solid #3b4244; }
+		.upsell-offer.expandida .upsell-pix { display: grid; grid-template-columns: 132px minmax(0, 1fr); }
+		.upsell-pix img { width: 132px; height: 132px; padding: 5px; border-radius: 8px; background: #fff; }
+		.upsell-pix-copy { min-width: 0; }
+		.upsell-pix-copy strong { display: block; margin-bottom: 4px; font-size: 13px; }
+		.upsell-pix-copy small { display: block; margin-bottom: 6px; color: #c9ced0; font-size: 11px; }
+		.upsell-pix-code { display: block; width: 100%; min-height: 58px; padding: 7px; overflow-wrap: anywhere; border: 1px solid #3b4244; border-radius: 6px; color: #d7d9da; background: #0d0f10; font-family: monospace; font-size: 10px; line-height: 1.35; }
+		.upsell-copy-button { margin-top: 7px; padding: 7px 10px; border: 0; border-radius: 6px; color: #151819; background: #fff; cursor: pointer; font-size: 11px; font-weight: 700; }
+		.upsell-copy-button:hover { background: #20c96b; }
+		@media (max-width: 600px) { .upsell-offer.expandida { grid-template-columns: 62px minmax(0, 1fr); } .upsell-offer.expandida .upsell-pix { grid-template-columns: 100px minmax(0, 1fr); } .upsell-pix img { width: 100px; height: 100px; } }
+		.upsell-confirmation { display: none; margin: -8px 0 20px; padding: 12px 14px; border: 1px solid #d9dfe1; border-radius: 10px; color: #d7d9da; background: #151819; font-size: 12px; line-height: 1.4; text-align: center; }
+		.upsell-confirmation.visivel { display: block; }
+		@media (max-width: 600px) { .upsell-offer { grid-template-columns: 62px minmax(0, 1fr); } .upsell-offer img { width: 62px; height: 62px; } .upsell-action { grid-column: 2; display: flex; align-items: center; justify-content: space-between; gap: 8px; } .upsell-timer { margin: 0; } }
+		.card { background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 15px 42px rgba(29, 67, 46, .1); overflow: hidden; }
+		.map { position: relative; height: 260px; overflow: hidden; background-color: #dceee3; background-image: linear-gradient(25deg, transparent 47%, rgba(255,255,255,.92) 48%, rgba(255,255,255,.92) 52%, transparent 53%), linear-gradient(110deg, transparent 46%, rgba(255,255,255,.7) 47%, rgba(255,255,255,.7) 53%, transparent 54%); background-size: 155px 118px, 205px 145px; }
+		.map:before, .map:after { content: ""; position: absolute; border: 2px dashed rgba(2,139,73,.3); border-radius: 50%; }
+		.map:before { width: 64%; height: 130%; left: 19%; top: -16%; transform: rotate(-22deg); }
+		.map:after { width: 43%; height: 91%; left: 36%; top: 4%; transform: rotate(28deg); }
+		.route { position: absolute; z-index: 1; left: 16%; right: 16%; top: 51%; border-top: 4px solid var(--green); transform: rotate(-11deg); }
+		.pin, .rider { position: absolute; z-index: 2; display: grid; place-items: center; border-radius: 50%; color: #fff; box-shadow: 0 5px 14px rgba(0,0,0,.2); }
+		.pin { width: 42px; height: 42px; font-size: 19px; }
+		.store { left: 11%; top: 42%; background: var(--green); }
+		.home { right: 11%; top: 49%; background: #ef4e4e; }
+		.rider { left: 23%; top: 39%; width: 54px; height: 54px; border: 0; background: transparent; box-shadow: none; font-size: 32px; transition: left .55s ease; animation: bob 1.15s ease-in-out infinite; }
+		@keyframes bob { 50% { transform: translateY(-6px) rotate(5deg); } }
+		.map-label { position: absolute; z-index: 3; bottom: 15px; left: 50%; transform: translateX(-50%); padding: 7px 12px; color: var(--ink); background: rgba(255,255,255,.9); border-radius: 99px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+		.inside { padding: 27px; }
+		.status-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+		h2 { margin: 0 0 5px; font-family: "Space Grotesk", sans-serif; font-size: 21px; letter-spacing: -.025em; }
+		.description { margin: 0; color: var(--muted); font-size: 13px; }
+		.remaining { color: var(--green); font-family: "Space Grotesk", sans-serif; font-size: 25px; font-weight: 700; white-space: nowrap; }
+		.bar { height: 8px; margin: 22px 0 25px; overflow: hidden; background: #e8f0e9; border-radius: 99px; }
+		.bar span { display: block; width: 0; height: 100%; background: var(--green); border-radius: inherit; transition: width .45s ease; }
+		.steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
+		.step { color: #9aa69e; font-size: 11px; line-height: 1.35; text-align: center; }
+		.step:before { content: attr(data-number); display: grid; place-items: center; width: 30px; height: 30px; margin: 0 auto 8px; border: 2px solid #cbd8cf; border-radius: 50%; background: #fff; font-weight: 700; }
+		.step.active, .step.done { color: var(--green); font-weight: 700; }
+		.step.active:before, .step.done:before { border-color: var(--green); background: var(--green); color: #fff; }
+		.tools { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); }
+		.tools small { color: var(--muted); font-size: 11px; }
+		.pickup-alert { margin-top: 12px; padding: 11px 14px; border: 1px solid #f4d8a2; border-radius: 10px; background: #fff8e8; color: #744d00; font-size: 12px; font-weight: 700; text-align: center; line-height: 1.45; }
+		.pickup-alert strong { color: #5c3900; }
+		.live-notice { display: flex; align-items: center; gap: 11px; padding: 10px 15px; color: #1d5f3f; background: #effaf3; border-bottom: 1px solid #d9eee0; font-size: 12px; font-weight: 600; }
+		.live-notice img { width: 34px; height: 34px; object-fit: cover; border-radius: 9px; background: #fff; }
+		.live-notice strong { display: block; color: var(--ink); font-size: 13px; }
+		.live-dot { width: 7px; height: 7px; margin-left: auto; border-radius: 50%; background: #18a957; box-shadow: 0 0 0 4px rgba(24,169,87,.12); animation: live-pulse 1.6s ease-in-out infinite; }
+		@keyframes live-pulse { 50% { opacity: .4; transform: scale(.8); } }
+		.page-notice { padding: 11px 22px; color: #765414; background: #fff8e5; border-bottom: 1px solid #f1dfaa; font-size: 12px; text-align: center; }
+		.page-notice strong { color: #5e430c; }
+		.button { border: 0; border-radius: 9px; padding: 11px 15px; color: #fff; background: var(--green); cursor: pointer; font-size: 13px; font-weight: 700; }
+		.button:hover { background: var(--green-dark); }
+		.backdrop { position: fixed; z-index: 10; inset: 0; display: none; place-items: center; padding: 20px; background: rgba(16, 31, 23, .62); }
+		.backdrop.open { display: grid; }
+		.modal { width: min(100%, 420px); padding: 29px; border-radius: 18px; background: #fff; text-align: center; box-shadow: 0 18px 55px rgba(0,0,0,.25); }
+		.modal-icon { display: grid; place-items: center; width: 56px; height: 56px; margin: 0 auto 15px; border-radius: 50%; color: var(--orange); background: #fff0e6; font-size: 25px; font-weight: 700; }
+		.modal h2 { font-size: 22px; } .modal p { margin: 0 0 21px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+		@media (max-width: 600px) { .topbar { height: 60px; } .page { padding-top: 32px; } .intro { align-items: flex-start; } h1 { font-size: 29px; } .eta strong { font-size: 27px; } .map { height: 205px; } .inside { padding: 20px 15px; } h2 { font-size: 18px; } .steps { gap: 2px; } .step { font-size: 10px; } .step:before { width: 26px; height: 26px; margin-bottom: 6px; } .tools { align-items: flex-start; flex-direction: column; } }
+	</style>
+</head>
+<body>
+	<header class="topbar"><div class="brand">VAPEWAVE</div><div class="order-tag">Pedido #2481</div></header>
+	<div class="page-notice" role="status"><strong>Aviso:</strong> não atualize a página ou feche para não dar erro na atualização em tempo real.</div>
+	<main class="page">
+		<div class="intro"><div><div class="eyebrow">Entrega em andamento</div><h1>Acompanhe seu pedido</h1></div><div class="eta"><strong id="eta">25 min</strong>tempo restante estimado</div></div>
+		<div class="upsell-offer" id="upsell-offer"><img src="images/upsell.jpg" alt="Ignite V40 de sabor sortido" width="74" height="74"><div class="upsell-copy"><small class="upsell-kicker">Oferta durante a separação</small><strong>Ignite V40 4000 puffs · sabor sortido</strong><span class="upsell-benefit">Preço de custo só para você.</span><span class="upsell-gift">BRINDE EXCLUSIVO</span><span class="upsell-price"><s>De R$ 34,33</s> por R$ 17,21 50%off</span></div><div class="upsell-action"><strong class="upsell-timer" id="upsell-timer">05:00</strong><button class="upsell-button" id="upsell-button" type="button">Comprar também</button></div><div class="upsell-pix" id="upsell-pix"><img id="upsell-qr-code" alt="QR Code Pix de exemplo" width="132" height="132"><div class="upsell-pix-copy"><strong>Pagamento Pix de exemplo</strong><small>Use um código Pix real antes de publicar.</small><code class="upsell-pix-code" id="upsell-pix-code"></code><button class="upsell-copy-button" id="upsell-copy-button" type="button">Copiar código Pix</button></div></div></div>
+		<p class="upsell-confirmation" id="upsell-confirmation">Se você pagou a oferta, o Ignite V40 foi incluído no seu pedido. Não se preocupe.</p>
+		<section class="card" aria-label="Rastreamento da entrega">
+			<div class="live-notice"><img src="images/doisirmao.jpg" alt="Pizzaria Dois Irmãos"><div><strong>Atualização em tempo real</strong>O status do seu pedido é atualizado automaticamente.</div><span class="live-dot" aria-label="Conectado"></span></div>
+			<div class="map" aria-label="Mapa ilustrado do trajeto"><div class="route"></div><div class="pin store" aria-label="Pizzaria">⌂</div><div class="pin home" aria-label="Sua casa">●</div><div class="rider" id="rider" aria-label="Motoboy">🏍️</div><div class="map-label" id="map-label">Pedido em preparo</div></div>
+			<div class="inside"><div class="status-row"><div><h2 id="status-title">Seu pedido está sendo separado</h2><p class="description" id="status-copy">já avisamos o motoboy para chegar na velocidade máxima.</p></div><div class="remaining" id="remaining">25 min</div></div>
+				<div class="bar"><span id="progress"></span></div>
+				<div class="steps" aria-label="Etapas do pedido"><div class="step active" data-number="1">Pedido<br>preparado</div><div class="step" data-number="2">Motoboy<br>retirou</div><div class="step" data-number="3">Outras<br>entregas</div><div class="step" data-number="4">Indo até<br>você</div><div class="step" data-number="5">Chegou<br>no destino</div></div>
+				<div class="tools"><small>Atualização em tempo real · velocidade máxima</small></div>
+				<div class="pickup-alert" role="alert">Será necessário pagar uma taxa de reenvio de <strong>R$ 7,90</strong> caso você não retire a encomenda no endereço.</div>
+			</div>
+		</section>
+	</main>
+	<div class="backdrop" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal"><div class="modal-icon">!</div><h2 id="modal-title">O motoboy não encontrou você</h2><p>Ele aguardou no endereço, mas você não apareceu. Será necessário pagar uma taxa de reenvio de R$ 7,90 caso você não retire a encomenda no endereço.</p><button class="button" id="resend" type="button">Pagar taxa de reenvio</button></div></div>
+	<script>
+		(function () {
+			const stages = [
+				["Seu pedido está sendo separado", "já avisamos o motoboy para chegar na velocidade máxima.", 6, "Pedido em separação", 23],
+				["O motoboy pegou seu pedido", "Seu pedido saiu.", 2, "Motoboy retirou o pedido", 42],
+				["O motoboy tem outras entregas pelo caminho", "Ele está fazendo outras paradas antes de chegar até você.", 9, "Fazendo outras entregas", 57],
+				["O motoboy está indo até você", "Falta pouco. Deixe o celular por perto.", 6, "A caminho da sua casa", 70],
+				["O motoboy chegou e está aguardando você retirar", "Ele ficará no endereço por mais 5 minutos.", 5, "Motoboy aguardando", 79]
+			];
+			const minute = 60 * 1000, totalEstimated = 25, storageKey = "pedido-2481-entrega";
+			const upsellDuration = 5 * minute;
+			const pixCopiaEColaExemplo = "00020126580014BR.GOV.BCB.PIX0136exemplo-vemdepizza-ignite-v40-1721520400005303986540517.215802BR5925VAPEWAVE EXEMPLO6009SAO PAULO62070503***6304ABCD";
+			let stage = 0, elapsed = 0, interval, deliveryState, upsellPurchased = false;
+			const $ = id => document.getElementById(id);
+			const stageEls = [...document.querySelectorAll(".step")];
+			function loadState() {
+				try { deliveryState = JSON.parse(localStorage.getItem(storageKey)) || { startedAt: Date.now() }; } catch (error) { deliveryState = { startedAt: Date.now() }; }
+				if (deliveryState.returnStartedAt) {
+					const returnRemaining = minute - (Date.now() - deliveryState.returnStartedAt);
+					if (returnRemaining > 0) {
+						$("status-title").textContent = "Retornando para a loja"; $("status-copy").textContent = "A taxa foi registrada. O novo envio começa em 1 minuto."; $("map-label").textContent = "Retornando para loja"; $("rider").style.left = "17%";
+						window.setTimeout(function () { deliveryState = { startedAt: Date.now() }; saveState(); stage = 0; elapsed = 0; render(); start(); }, returnRemaining);
+						return false;
+					}
+					deliveryState = { startedAt: Date.now() };
+				}
+				if (!deliveryState.startedAt) deliveryState.startedAt = Date.now();
+				return true;
+			}
+			function saveState() { localStorage.setItem(storageKey, JSON.stringify(deliveryState)); }
+			function getStage(totalMinutes) {
+				let passed = 0;
+				for (let index = 0; index < stages.length; index++) { if (totalMinutes < passed + stages[index][2]) return { index: index, elapsed: totalMinutes - passed }; passed += stages[index][2]; }
+				return { index: 4, elapsed: stages[4][2] };
+			}
+			function render() {
+				const data = stages[stage], total = stages.slice(0, stage).reduce((sum, item) => sum + item[2], 0) + elapsed, remaining = Math.max(totalEstimated - total, 0);
+				$("status-title").textContent = data[0]; $("status-copy").textContent = data[1]; $("remaining").textContent = remaining + " min"; $("eta").textContent = remaining + " min"; $("map-label").textContent = data[3]; $("rider").style.left = data[4] + "%"; $("progress").style.width = Math.min(total / 27 * 100, 100) + "%";
+				const upsellRemaining = Math.max(upsellDuration - (Date.now() - deliveryState.startedAt), 0), upsell = $("upsell-offer"), confirmation = $("upsell-confirmation");
+				upsell.classList.toggle("encerrada", stage !== 0 || upsellRemaining <= 0);
+				confirmation.classList.toggle("visivel", upsellPurchased && stage === 0 && upsellRemaining <= 0);
+				if (upsellRemaining > 0 && stage === 0) $("upsell-timer").textContent = String(Math.floor(upsellRemaining / 60000)).padStart(2, "0") + ":" + String(Math.floor((upsellRemaining % 60000) / 1000)).padStart(2, "0");
+				stageEls.forEach((item, index) => { item.classList.toggle("active", index === stage); item.classList.toggle("done", index < stage); });
+			}
+			function stop() { clearInterval(interval); }
+			function openModal() { stop(); $("modal").classList.add("open"); }
+			function syncFromClock() {
+				const totalMinutes = Math.floor((Date.now() - deliveryState.startedAt) / minute), position = getStage(totalMinutes);
+				stage = position.index; elapsed = position.elapsed;
+				if (totalMinutes >= 27) openModal(); else render();
+			}
+			function start() { stop(); syncFromClock(); interval = setInterval(syncFromClock, 1000); }
+			$("upsell-button").addEventListener("click", function () { upsellPurchased = true; const offer = $("upsell-offer"); offer.classList.add("expandida"); $("upsell-qr-code").src = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + encodeURIComponent(pixCopiaEColaExemplo); $("upsell-pix-code").textContent = pixCopiaEColaExemplo; this.textContent = "Oferta selecionada"; this.disabled = true; });
+			$("upsell-copy-button").addEventListener("click", async function () { try { await navigator.clipboard.writeText(pixCopiaEColaExemplo); this.textContent = "Código copiado"; } catch (error) { this.textContent = "Selecione o código para copiar"; } });
+			$("resend").addEventListener("click", function () { $("resend").disabled = true; $("resend").textContent = "Motoboy retornando à loja..."; $("status-title").textContent = "Retornando para a loja"; $("status-copy").textContent = "A taxa foi registrada. O novo envio começa em 1 minuto."; $("map-label").textContent = "Retornando para loja"; $("rider").style.left = "17%"; deliveryState = { returnStartedAt: Date.now() }; saveState(); setTimeout(function () { deliveryState = { startedAt: Date.now() }; saveState(); stage = 0; elapsed = 0; $("modal").classList.remove("open"); $("resend").disabled = false; $("resend").textContent = "Pagar taxa de reenvio"; render(); start(); }, minute); });
+			if (loadState()) { saveState(); render(); start(); }
+		}());
+	</script>
+</body>
+</html>
