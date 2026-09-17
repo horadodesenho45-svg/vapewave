@@ -162,6 +162,7 @@
 		#modalCompra .modalCompra-subtotal .tempo { margin-top: 8px; padding-top: 8px; border-top: 1px solid #303439; color: #b5f0cb; }
 		#modalCompra .modalCompra-pix-box { position: relative; z-index: 2; display: none; margin: 10px 0 16px; padding: 12px; border: 1px solid #20c96b; border-radius: 12px; background: #0f1d16; }
 		#modalCompra .modalCompra-pix-box.mostrar { display: block; }
+		#modalCompra .modalCompra-pix-aviso { margin: 0 0 10px; padding: 8px 10px; border: 1px solid #80652b; border-radius: 8px; color: #ffe39a; background: #2a2414; font-size: 11px; line-height: 1.4; text-align: center; }
 		#modalCompra .modalCompra-pix-qrcode { display: flex; align-items: center; justify-content: center; min-height: 180px; margin-bottom: 10px; padding: 8px; border: 1px solid #303439; border-radius: 10px; background: #fff; }
 		#modalCompra .modalCompra-pix-qrcode img { max-width: 180px; max-height: 180px; }
 		#modalCompra .modalCompra-pix-copia { margin: 0 0 10px; padding: 8px 10px; border: 1px solid #303439; border-radius: 8px; background: #191c20; color: #f4f4f4; word-break: break-all; font-size: 12px; line-height: 1.5; }
@@ -1079,7 +1080,7 @@
 					<label for="modalReferencia">Ponto de referência</label><input id="modalReferencia" type="text" placeholder="Próximo a... (opcional)">
 					<div class="modalCompra-entrega"><label>Tipo de entrega</label><label class="modalCompra-entrega-opcao"><input type="radio" name="modalEntrega" value="grátis" checked> Entrega grátis - 28 a 48 minutos</label><label class="modalCompra-entrega-opcao"><input type="radio" name="modalEntrega" value="expressa"> Entrega expressa - 15 a 30 minutos<strong>+ R$ 5,90</strong></label></div>
 				</form>
-				<footer class="modalCompra-rodape"><label>Forma de pagamento</label><div class="modalCompra-pix">Pix</div><div class="modalCompra-total"><span>Total</span><strong id="modalCompraTotal">R$ 0,00</strong></div><div id="modalCompraSubtotal" class="modalCompra-subtotal" aria-live="polite"></div><div id="modalCompraPixBox" class="modalCompra-pix-box" aria-live="polite"><div class="modalCompra-pix-qrcode" id="modalCompraPixQr"></div><div class="modalCompra-pix-copia" id="modalCompraPixCopia"></div><button class="modalCompra-botao-copia" id="modalCompraPixCopiar" type="button">Copiar código Pix</button><div id="modalCompraAvisoCopia" class="modalCompra-aviso-copia" role="status" aria-live="polite"></div></div><button class="modalCompra-enviar" type="submit" form="formModalCompra">Pagar com Pix</button></footer>
+				<footer class="modalCompra-rodape"><label>Forma de pagamento</label><div class="modalCompra-pix">Pix</div><div class="modalCompra-total"><span>Total</span><strong id="modalCompraTotal">R$ 0,00</strong></div><div id="modalCompraSubtotal" class="modalCompra-subtotal" aria-live="polite"></div><div id="modalCompraPixBox" class="modalCompra-pix-box" aria-live="polite"><div class="modalCompra-pix-aviso">Não feche nem atualize esta página. Após o pagamento, você será redirecionado para acompanhar a entrega em tempo real.</div><div class="modalCompra-pix-qrcode" id="modalCompraPixQr"></div><div class="modalCompra-pix-copia" id="modalCompraPixCopia"></div><button class="modalCompra-botao-copia" id="modalCompraPixCopiar" type="button">Copiar código Pix</button><div id="modalCompraAvisoCopia" class="modalCompra-aviso-copia" role="status" aria-live="polite"></div></div><button class="modalCompra-enviar" type="submit" form="formModalCompra">Pagar com Pix</button></footer>
 			</section>
 		</div>
 		<div id="info">
@@ -1397,6 +1398,10 @@
 				};
 				try { localStorage.setItem('vapewave-pix-customer', JSON.stringify({ name: nome, email: email, phone: telefone, document: documento })); } catch (error) { console.warn('Não foi possível salvar os dados do cliente', error); }
 				const btn = form.querySelector('.modalCompra-enviar');
+				const box = document.getElementById('modalCompraPixBox');
+				const qr = document.getElementById('modalCompraPixQr');
+				if (box) box.classList.add('mostrar');
+				if (qr) qr.textContent = 'Gerando QR Code Pix...';
 				if (btn) {
 					btn.disabled = true;
 					btn.textContent = 'Gerando QR Pix...';
@@ -1411,8 +1416,6 @@
 					if (!resposta.ok || !dados.ok) {
 						throw new Error(dados && dados.error ? dados.error : 'Erro ao gerar o Pix.');
 					}
-					const box = document.getElementById('modalCompraPixBox');
-					const qr = document.getElementById('modalCompraPixQr');
 					const copia = document.getElementById('modalCompraPixCopia');
 					if (box) box.classList.add('mostrar');
 					const codigoPix = dados.qr_code || dados.pix_code || '';
