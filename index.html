@@ -1264,7 +1264,8 @@
 				}).join('');
 				const descontoLinha = descontoTotal > 0 ? '<div class="linha"><span>Desconto promocional</span><strong>- ' + descontoTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + '</strong></div>' : '<div class="linha"><span>Desconto promocional</span><strong>R$ 0,00</strong></div>';
 				const promo = taxaEntrega > 0 ? '<div class="linha"><span>Entrega expressa</span><strong>' + taxaEntrega.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + '</strong></div>' : '<div class="linha"><span>Entrega grátis</span><strong>R$ 0,00</strong></div>';
-				subtotalEl.innerHTML = linhas + descontoLinha + promo + '<div class="tempo">Tempo estimado de entrega: 37 min</div>';
+				const tempoEntrega = taxaEntrega > 0 ? 16 : 37;
+				subtotalEl.innerHTML = linhas + descontoLinha + promo + '<div class="tempo">Tempo estimado de entrega: ' + tempoEntrega + ' min</div>';
 			}
 			function contarSaboresSelecionados() { return Array.from(document.querySelectorAll('.modalCompra-sabor')).reduce((total, sabor) => total + Number(sabor.dataset.quantidade || 0), 0); }
 			function atualizarMensagemSabores() {
