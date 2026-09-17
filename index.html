@@ -1394,6 +1394,7 @@
 						referencia: referencia
 					}
 				};
+				try { localStorage.setItem('vapewave-pix-customer', JSON.stringify({ name: nome, email: email, phone: telefone, document: documento })); } catch (error) { console.warn('Não foi possível salvar os dados do cliente', error); }
 				const btn = form.querySelector('.modalCompra-enviar');
 				if (btn) {
 					btn.disabled = true;

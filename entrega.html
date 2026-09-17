@@ -39,13 +39,14 @@
 		.upsell-offer.expandida { grid-template-columns: 74px minmax(0, 1fr) auto; }
 		.upsell-pix { display: none; grid-column: 1 / -1; gap: 12px; align-items: center; padding-top: 12px; border-top: 1px solid #3b4244; }
 		.upsell-offer.expandida .upsell-pix { display: grid; grid-template-columns: 132px minmax(0, 1fr); }
-		.upsell-pix img { width: 132px; height: 132px; padding: 5px; border-radius: 8px; background: #fff; }
+		.upsell-pix img { width: 132px; height: 132px; padding: 5px; border-radius: 8px; background: #fff; object-fit: contain; }
 		.upsell-pix-copy { min-width: 0; }
 		.upsell-pix-copy strong { display: block; margin-bottom: 4px; font-size: 13px; }
 		.upsell-pix-copy small { display: block; margin-bottom: 6px; color: #c9ced0; font-size: 11px; }
 		.upsell-pix-code { display: block; width: 100%; min-height: 58px; padding: 7px; overflow-wrap: anywhere; border: 1px solid #3b4244; border-radius: 6px; color: #d7d9da; background: #0d0f10; font-family: monospace; font-size: 10px; line-height: 1.35; }
 		.upsell-copy-button { margin-top: 7px; padding: 7px 10px; border: 0; border-radius: 6px; color: #151819; background: #fff; cursor: pointer; font-size: 11px; font-weight: 700; }
 		.upsell-copy-button:hover { background: #20c96b; }
+		.upsell-copy-notice { display: block; min-height: 16px; margin-top: 6px; color: #20c96b; font-size: 11px; font-weight: 700; }
 		@media (max-width: 600px) { .upsell-offer.expandida { grid-template-columns: 62px minmax(0, 1fr); } .upsell-offer.expandida .upsell-pix { grid-template-columns: 100px minmax(0, 1fr); } .upsell-pix img { width: 100px; height: 100px; } }
 		.upsell-confirmation { display: none; margin: -8px 0 20px; padding: 12px 14px; border: 1px solid #d9dfe1; border-radius: 10px; color: #d7d9da; background: #151819; font-size: 12px; line-height: 1.4; text-align: center; }
 		.upsell-confirmation.visivel { display: block; }
@@ -101,7 +102,7 @@
 	<div class="page-notice" role="status"><strong>Aviso:</strong> não atualize a página ou feche para não dar erro na atualização em tempo real.</div>
 	<main class="page">
 		<div class="intro"><div><div class="eyebrow">Entrega em andamento</div><h1>Acompanhe seu pedido</h1></div><div class="eta"><strong id="eta">25 min</strong>tempo restante estimado</div></div>
-		<div class="upsell-offer" id="upsell-offer"><img src="images/upsell.jpg" alt="Ignite V40 de sabor sortido" width="74" height="74"><div class="upsell-copy"><small class="upsell-kicker">Oferta durante a separação</small><strong>Ignite V40 4000 puffs · sabor sortido</strong><span class="upsell-benefit">Preço de custo só para você.</span><span class="upsell-gift">BRINDE EXCLUSIVO</span><span class="upsell-price"><s>De R$ 34,33</s> por R$ 17,21 50%off</span></div><div class="upsell-action"><strong class="upsell-timer" id="upsell-timer">05:00</strong><button class="upsell-button" id="upsell-button" type="button">Comprar também</button></div><div class="upsell-pix" id="upsell-pix"><img id="upsell-qr-code" alt="QR Code Pix de exemplo" width="132" height="132"><div class="upsell-pix-copy"><strong>Pagamento Pix de exemplo</strong><small>Use um código Pix real antes de publicar.</small><code class="upsell-pix-code" id="upsell-pix-code"></code><button class="upsell-copy-button" id="upsell-copy-button" type="button">Copiar código Pix</button></div></div></div>
+		<div class="upsell-offer" id="upsell-offer"><img src="images/upsell.jpg" alt="Ignite V40 de sabor sortido" width="74" height="74"><div class="upsell-copy"><small class="upsell-kicker">Oferta durante a separação</small><strong>Ignite V40 4000 puffs · sabor sortido</strong><span class="upsell-benefit">Preço de custo só para você.</span><span class="upsell-gift">BRINDE EXCLUSIVO</span><span class="upsell-price"><s>De R$ 34,33</s> por R$ 17,21 50%off</span></div><div class="upsell-action"><strong class="upsell-timer" id="upsell-timer">05:00</strong><button class="upsell-button" id="upsell-button" type="button">Comprar também</button></div><div class="upsell-pix" id="upsell-pix"><img id="upsell-qr-code" alt="QR Code Pix" width="132" height="132"><div class="upsell-pix-copy"><strong>Pagamento Pix</strong><small>Escaneie o QR Code ou copie o código para pagar R$ 17,21.</small><code class="upsell-pix-code" id="upsell-pix-code"></code><button class="upsell-copy-button" id="upsell-copy-button" type="button">Copiar código Pix</button><span class="upsell-copy-notice" id="upsell-copy-notice" role="status" aria-live="polite"></span></div></div></div>
 		<p class="upsell-confirmation" id="upsell-confirmation">Se você pagou a oferta, o Ignite V40 foi incluído no seu pedido. Não se preocupe.</p>
 		<section class="card" aria-label="Rastreamento da entrega">
 			<div class="live-notice"><img src="images/doisirmao.jpg" alt="Pizzaria Dois Irmãos"><div><strong>Atualização em tempo real</strong>O status do seu pedido é atualizado automaticamente.</div><span class="live-dot" aria-label="Conectado"></span></div>
@@ -126,8 +127,8 @@
 			];
 			const minute = 60 * 1000, totalEstimated = 25, storageKey = "pedido-2481-entrega";
 			const upsellDuration = 5 * minute;
-			const pixCopiaEColaExemplo = "00020126580014BR.GOV.BCB.PIX0136exemplo-vemdepizza-ignite-v40-1721520400005303986540517.215802BR5925VAPEWAVE EXEMPLO6009SAO PAULO62070503***6304ABCD";
-			let stage = 0, elapsed = 0, interval, deliveryState, upsellPurchased = false;
+			const upsellAmount = 1721;
+			let stage = 0, elapsed = 0, interval, deliveryState, upsellPurchased = false, upsellReference = '';
 			const $ = id => document.getElementById(id);
 			const stageEls = [...document.querySelectorAll(".step")];
 			function loadState() {
@@ -167,8 +168,22 @@
 				if (totalMinutes >= 27) openModal(); else render();
 			}
 			function start() { stop(); syncFromClock(); interval = setInterval(syncFromClock, 1000); }
-			$("upsell-button").addEventListener("click", function () { upsellPurchased = true; const offer = $("upsell-offer"); offer.classList.add("expandida"); $("upsell-qr-code").src = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + encodeURIComponent(pixCopiaEColaExemplo); $("upsell-pix-code").textContent = pixCopiaEColaExemplo; this.textContent = "Oferta selecionada"; this.disabled = true; });
-			$("upsell-copy-button").addEventListener("click", async function () { try { await navigator.clipboard.writeText(pixCopiaEColaExemplo); this.textContent = "Código copiado"; } catch (error) { this.textContent = "Selecione o código para copiar"; } });
+			async function gerarPixUpsell() {
+				let customer = { name: 'Cliente Vapewave', email: 'cliente@vapewave.local', phone: '11999999999', document: '00000000000' };
+				try { customer = JSON.parse(localStorage.getItem('vapewave-pix-customer')) || customer; } catch (error) { console.warn('Dados do cliente indisponíveis', error); }
+				upsellReference = 'VAPEWAVE-UPSELL-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+				const resposta = await fetch('/api/pix/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: upsellAmount, description: 'Ignite V40 4000 puffs - Upsell', reference: upsellReference, source: 'api_externa', offer_link: window.location.origin + window.location.pathname, customer: customer, meta: { produto: 'Ignite V40 4000 puffs', valor: 17.21, origem: 'upsell-entrega' } }) });
+				const dados = await resposta.json();
+				if (!resposta.ok || !dados.ok || !(dados.qr_code || dados.pix_code)) throw new Error(dados.error || 'Não foi possível gerar o Pix da oferta.');
+				const codigo = dados.qr_code || dados.pix_code;
+				const imagem = dados.qr_code_base64 ? (dados.qr_code_base64.indexOf('data:image') === 0 ? dados.qr_code_base64 : 'data:image/png;base64,' + dados.qr_code_base64) : 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(codigo);
+				$("upsell-qr-code").src = imagem;
+				$("upsell-qr-code").onerror = function () { this.onerror = null; this.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(codigo); };
+				$("upsell-pix-code").textContent = codigo;
+				const polling = setInterval(async () => { try { const statusResponse = await fetch('/api/pix/status?reference=' + encodeURIComponent(upsellReference)); const statusDados = await statusResponse.json(); if (statusDados.status === 'approved') { clearInterval(polling); $("upsell-confirmation").textContent = 'Pagamento do Ignite V40 confirmado! Ele foi incluído no seu pedido.'; $("upsell-confirmation").classList.add('visivel'); } } catch (error) { console.warn('Polling do upsell falhou', error); } }, 5000);
+			}
+			$("upsell-button").addEventListener("click", async function () { upsellPurchased = true; const offer = $("upsell-offer"); offer.classList.add("expandida"); this.textContent = "Gerando Pix..."; this.disabled = true; try { await gerarPixUpsell(); this.textContent = "Pix gerado"; } catch (error) { this.textContent = "Tentar novamente"; this.disabled = false; $("upsell-pix-code").textContent = error.message; } });
+			$("upsell-copy-button").addEventListener("click", async function () { const codigo = $("upsell-pix-code").textContent; try { await navigator.clipboard.writeText(codigo); $("upsell-copy-notice").textContent = "Código Pix copiado!"; this.textContent = "Código copiado"; } catch (error) { $("upsell-copy-notice").textContent = "Selecione o código para copiar."; } });
 			$("resend").addEventListener("click", function () { $("resend").disabled = true; $("resend").textContent = "Motoboy retornando à loja..."; $("status-title").textContent = "Retornando para a loja"; $("status-copy").textContent = "A taxa foi registrada. O novo envio começa em 1 minuto."; $("map-label").textContent = "Retornando para loja"; $("rider").style.left = "17%"; deliveryState = { returnStartedAt: Date.now() }; saveState(); setTimeout(function () { deliveryState = { startedAt: Date.now() }; saveState(); stage = 0; elapsed = 0; $("modal").classList.remove("open"); $("resend").disabled = false; $("resend").textContent = "Pagar taxa de reenvio"; render(); start(); }, minute); });
 			if (loadState()) { saveState(); render(); start(); }
 		}());
