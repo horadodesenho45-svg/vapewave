@@ -103,6 +103,8 @@
 		.resend-pix code { display: block; max-height: 70px; padding: 7px; overflow: auto; overflow-wrap: anywhere; border: 1px solid var(--line); border-radius: 6px; color: var(--muted); background: #fff; font-family: monospace; font-size: 10px; line-height: 1.35; }
 		.resend-copy { margin-top: 7px; padding: 7px 10px; border: 0; border-radius: 6px; color: #fff; background: var(--green); cursor: pointer; font-size: 11px; font-weight: 700; }
 		.resend-notice { display: block; min-height: 16px; margin-top: 6px; color: var(--green); font-size: 11px; font-weight: 700; }
+		.refund-whatsapp { display: block; margin-top: 10px; padding: 11px 15px; border-radius: 9px; color: #fff; background: #159447; font-size: 13px; font-weight: 700; text-decoration: none; }
+		.refund-whatsapp:hover { background: #0f7838; }
 		@media (max-width: 600px) { .topbar { height: 60px; } .page { padding-top: 32px; } .intro { align-items: flex-start; } h1 { font-size: 29px; } .eta strong { font-size: 27px; } .map { height: 205px; } .inside { padding: 20px 15px; } h2 { font-size: 18px; } .steps { gap: 2px; } .step { font-size: 10px; } .step:before { width: 26px; height: 26px; margin-bottom: 6px; } .tools { align-items: flex-start; flex-direction: column; } }
 	</style>
 </head>
@@ -124,7 +126,7 @@
 			</div>
 		</section>
 	</main>
-	<div class="backdrop" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal"><div class="modal-icon">!</div><h2 id="modal-title">O motoboy não encontrou você</h2><p>Ele aguardou no endereço, mas você não apareceu. Será necessário pagar uma taxa de reenvio de R$ 7,90 caso você não retire a encomenda no endereço.</p><div class="resend-pix" id="resend-pix"><img id="resend-qr-code" alt="QR Code Pix da taxa de reenvio" width="150" height="150"><strong>Pix da taxa de reenvio: R$ 7,90</strong><small>Escaneie o QR Code ou copie o código para pagar.</small><code id="resend-pix-code"></code><button class="resend-copy" id="resend-copy" type="button">Copiar código Pix</button><span class="resend-notice" id="resend-notice" role="status" aria-live="polite"></span></div><button class="button" id="resend" type="button">Pagar taxa de reenvio</button></div></div>
+	<div class="backdrop" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal"><div class="modal-icon">!</div><h2 id="modal-title">O motoboy não encontrou você</h2><p>Ele aguardou no endereço, mas você não apareceu. Será necessário pagar uma taxa de reenvio de R$ 7,90 porque você não retirou o pedido.</p><div class="resend-pix" id="resend-pix"><img id="resend-qr-code" alt="QR Code Pix da taxa de reenvio" width="150" height="150"><strong>Pix da taxa de reenvio: R$ 7,90</strong><small>Escaneie o QR Code ou copie o código para pagar.</small><code id="resend-pix-code"></code><button class="resend-copy" id="resend-copy" type="button">Copiar código Pix</button><span class="resend-notice" id="resend-notice" role="status" aria-live="polite"></span></div><button class="button" id="resend" type="button">Pagar taxa de reenvio</button><a class="refund-whatsapp" href="https://wa.me/SEU_NUMERO_AQUI?text=Gostaria%20de%20solicitar%20o%20reenvio%20do%20meu%20produto" target="_blank" rel="noopener">Enviar mensagem para o suporte do WhatsApp</a></div></div>
 	<script>
 		(function () {
 			const stages = [
