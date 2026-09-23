@@ -1411,13 +1411,14 @@
 			} if (event.target.closest('#modalQuantidadeMais, #modalQuantidadeMenos')) { const output = document.getElementById('modalQuantidade'); const atual = Number(output.textContent); const quantidade = event.target.closest('#modalQuantidadeMais') ? atual + 1 : Math.max(1, atual - 1); output.textContent = quantidade; atualizarSelecaoSabores(quantidade); atualizarTotal(); atualizarMensagemSabores(); } const produtoLink = event.target.closest('a.disponivel'); if (produtoLink || event.target.closest('#btFinalizar, .btn-comprar, .comprar, .adicionarProduto')) { event.preventDefault(); abrirModalCompra(produtoLink); } if (event.target === modal || event.target.closest('#fecharModalCompra')) fecharModalCompra(); });
 			document.addEventListener('keydown', function (event) { if (event.key === 'Escape') fecharModalCompra(); });
 			form.addEventListener('submit', async function (event) { event.preventDefault(); const quantidade = Number(document.getElementById('modalQuantidade').textContent || 1); const saboresSelecionados = Array.from(document.querySelectorAll('.modalCompra-sabor')).filter(sabor => Number(sabor.dataset.quantidade || 0) > 0); const faltando = Math.max(0, quantidade - saboresSelecionados.reduce((total, sabor) => total + Number(sabor.dataset.quantidade || 0), 0)); if (faltando > 0) { const textoAlerta = 'Falta escolher ' + faltando + ' sabor' + (faltando > 1 ? 'es' : ''); mostrarAlertaSabor(textoAlerta); return; } const nome = document.getElementById('modalNome').value.trim(); const telefone = document.getElementById('modalTelefone').value.replace(/\D/g, ''); const documento = document.getElementById('modalDocumento').value.replace(/\D/g, ''); const email = document.getElementById('modalEmail').value.trim(); const rua = document.getElementById('modalRua').value.trim(); const numero = document.getElementById('modalNumero').value.trim(); const bairro = document.getElementById('modalBairro').value.trim(); const complemento = document.getElementById('modalComplemento').value.trim(); const referencia = document.getElementById('modalReferencia').value.trim(); const entrega = document.querySelector('input[name="modalEntrega"]:checked'); const valorCents = Math.round((preco * quantidade) * 100);
+				const cookiesMeta = document.cookie.split(';').reduce((cookies, item) => { const partes = item.trim().split('='); if (partes.length > 1) cookies[partes[0]] = partes.slice(1).join('='); return cookies; }, {});
 				const payload = {
 					description: produtoNome,
 					amount: valorCents,
 					reference: 'VAPEWAVE-' + Date.now() + '-' + Math.floor(Math.random() * 10000),
 					offer_link: window.location.origin + window.location.pathname,
 					source: 'api_externa',
-					customer: { name: nome, email: email || 'cliente@vapewave.local', phone: telefone, document: documento || '00000000000' },
+					customer: { name: nome, email: email || 'cliente@vapewave.local', phone: telefone, document: documento || '00000000000', fbp: cookiesMeta._fbp, fbc: cookiesMeta._fbc },
 					tracking: { utm_source: 'site', utm_medium: 'checkout', utm_campaign: 'pix_vapewave' },
 					meta: {
 						produto: produtoNome,

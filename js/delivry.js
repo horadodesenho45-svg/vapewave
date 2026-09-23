@@ -570,10 +570,6 @@ $(document).ready(function () {
 							$('#modalCarregando').hide();
 						} else {
 
-							if (pixel != "") {
-								fbq('track', 'Purchase', { value: ((subtotal + taxa) - descontoPorPontosFidelidade - descontoPorCupom), currency: 'BRL' });
-							}
-
 							if (obj.rastreamento) {
 								if (obj.pedido) {
 

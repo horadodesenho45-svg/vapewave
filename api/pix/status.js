@@ -1,3 +1,5 @@
+const { isApprovedStatus, sendMetaPurchase } = require('../_lib/meta-purchase');
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -51,12 +53,30 @@ module.exports = async function handler(req, res) {
 
     const payload = Array.isArray(data) ? data[0] : data;
     const status = (payload && (payload.status || payload.transaction_status || payload.state)) || 'pending';
+    let metaPurchase = { sent: false, skipped: true };
+
+    if (isApprovedStatus(status)) {
+      try {
+        metaPurchase = await sendMetaPurchase({
+          reference,
+          amount: payload && (payload.amount || payload.value),
+          description: payload && (payload.description || payload.title),
+          customer: payload && (payload.customer || payload.customer_data || payload.metadata?.customer),
+          request: req,
+          eventSourceUrl: `${req.headers['x-forwarded-proto'] || 'https'}://${req.headers.host || 'vaporwave.online'}/`
+        });
+      } catch (error) {
+        console.error('Meta Purchase falhou:', error && error.message ? error.message : error);
+        metaPurchase = { sent: false, error: 'Não foi possível enviar o evento Purchase.' };
+      }
+    }
 
     return res.status(200).json({
       ok: true,
       status,
       reference,
-      transaction: payload || null
+      transaction: payload || null,
+      meta_purchase: metaPurchase
     });
   } catch (error) {
     return res.status(500).json({
