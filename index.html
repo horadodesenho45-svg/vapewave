@@ -342,6 +342,21 @@
 							</a>
 						</div>
 						<div class="item">
+							<a class="disponivel" href="/produtos/pizza/pizza6">
+								<div class="texto">
+									<h3>Ignite V500 — 50.000 Puffs</h3>
+									<span>Mais potência e duração. Qualidade IGNITE.</span>
+									de <span class="precoPromocao">R$ 183,90</span> por
+									<span class="preco"> R$ 138,44 </span>
+								</div>
+								<div class="fotoProduto">
+									<figure>
+										<img src="images/ignitev500.png" width="110px" height="110px" loading="lazy" alt="Ignite V500 50.000 Puffs">
+									</figure>
+								</div>
+							</a>
+						</div>
+						<div class="item">
 							<a class="disponivel pulsar" href="/produtos/pizza/pizza3" style="border: 2px solid #077c22;">
 								<div class="texto">
 									<span style="
@@ -393,6 +408,21 @@
 								<div class="fotoProduto">
 									<figure>
 										<img src="images/oxbar-50k.png" width="110px" height="110px" loading="lazy" alt="(Apenas Retirada) Açaí 770ml">
+									</figure>
+								</div>
+							</a>
+						</div>
+						<div class="item">
+							<a class="disponivel" href="/produtos/pizza/pizza7">
+								<div class="texto">
+									<h3>OXBAR MAZE — 100.000 Puffs <span style="display: inline-block; margin-left: 4px; padding: 2px 6px; border-radius: 6px; background: #20c96b; color: #07130b; font-size: 10px; font-weight: 900; vertical-align: middle;">NOVIDADE</span></h3>
+									<span>Potência máxima para quem quer muitos puffs.</span>
+									de <span class="precoPromocao">R$ 250,69</span> por
+									<span class="preco"> R$ 202,91 </span>
+								</div>
+								<div class="fotoProduto">
+									<figure>
+										<img src="images/oxbar100k.png" width="110px" height="110px" loading="lazy" alt="OXBAR MAZE 100.000 Puffs">
 									</figure>
 								</div>
 							</a>
@@ -1242,14 +1272,16 @@
 			const saboresPadrao = ['Calabresa', 'Frango', 'Mussarela', 'Portuguesa', 'Quatro queijos'];
 			const saboresElfbarBc = ['Watermelon Ice', 'Bluerazz Ice', 'Banana Ice', 'Strawberry Ice', 'Sour Apple Ice', 'Strawberry Kiwi', 'Icy Mint', 'Sakura Grape', 'Tropical Lemonade'];
 			const saboresIgniteV250 = ['Grape Ice', 'Pineapple Ice', 'Strawberry Ice', 'Watermelon Ice', 'Strawberry Kiwi'];
+			const saboresIgniteV500 = ['Watermelon Ice', 'Strawberry Ice', 'Strawberry Apple Watermelon', 'Green Apple', 'Kiwi Açai', 'Icy Mint', 'Mango Passion Fruit'];
 			const saboresElfbarTe = ['Watermelon Ice', 'Bubbaloo Grape', 'Bubbaloo Tutti-Fruti', 'Dragon Strawnana', 'Strawberry Watermelon Ice'];
 			const saboresElfbarIceKing = ['Watermelon Ice', 'Blue Razz Ice', 'Strawberry Kiwi', 'Black Mint', 'Sakura Grape', 'Sour Apple Ice'];
 			const saboresOxbar = ['Watermelon', 'Blue Razzle', 'Fruity Worms', 'Icy Mint', 'Cane Mint', 'Strawberry'];
+			const saboresOxbarMaze = ['Extreme Mint', 'Grand Purple', 'Grape Ice', 'Ox Love', 'Strawberry Watermelon', 'Watermelon Ice'];
 			const saboresElfbarThc3000 = ['Strawberry Cough', 'Cherry Kush', 'Grape Runtz', 'Purple Panty Dropper'];
 			const saboresElfbarThc8000 = ['Blueberry Caviar', 'Fantazy Melon', 'Strawnana Kush', 'Peach Nectar'];
 			function emojiDoSabor(sabor) { const nome = sabor.toLowerCase(); if (nome.includes('watermelon') || nome.includes('melon')) return '🍉'; if (nome.includes('blue') || nome.includes('bluerazz') || nome.includes('blueberry')) return '🫐'; if (nome.includes('banana')) return '🍌'; if (nome.includes('straw')) return '🍓'; if (nome.includes('kiwi')) return '🥝'; if (nome.includes('apple')) return '🍏'; if (nome.includes('grape') || nome.includes('purple')) return '🍇'; if (nome.includes('pineapple')) return '🍍'; if (nome.includes('lemon')) return '🍋'; if (nome.includes('mint')) return '🌿'; if (nome.includes('cherry')) return '🍒'; if (nome.includes('peach')) return '🍑'; if (nome.includes('tropical')) return '🌴'; if (nome.includes('fruity') || nome.includes('caviar')) return '🍬'; if (nome.includes('calabresa')) return '🍕'; if (nome.includes('frango')) return '🍗'; if (nome.includes('mussarela')) return '🧀'; if (nome.includes('portuguesa')) return '🍕'; if (nome.includes('queijo')) return '🧀'; return '🍭'; }
 			function textoDoSabor(sabor, quantidade) { return `${emojiDoSabor(sabor)} ${sabor}${quantidade > 1 ? ` (${quantidade}x)` : ''}`; }
-			function renderizarSabores() { const sabores = /elfbar bc/i.test(produtoNome) ? saboresElfbarBc : /ignite v250/i.test(produtoNome) ? saboresIgniteV250 : /elfbar te/i.test(produtoNome) ? saboresElfbarTe : /elfbar ice king/i.test(produtoNome) ? saboresElfbarIceKing : /elfbar thc3000/i.test(produtoNome) ? saboresElfbarThc3000 : /elfbar thc\s*8000/i.test(produtoNome) ? saboresElfbarThc8000 : /oxbar/i.test(produtoNome) ? saboresOxbar : saboresPadrao; document.querySelector('.modalCompra-sabores').innerHTML = sabores.map((sabor, indice) => `<button class="modalCompra-sabor${indice === 0 ? ' selecionado' : ''}" data-sabor="${sabor}" data-quantidade="${indice === 0 ? 1 : 0}" type="button">${textoDoSabor(sabor, indice === 0 ? 1 : 0)}</button>`).join(''); }
+			function renderizarSabores() { const sabores = /elfbar bc/i.test(produtoNome) ? saboresElfbarBc : /ignite v500/i.test(produtoNome) ? saboresIgniteV500 : /ignite v250/i.test(produtoNome) ? saboresIgniteV250 : /elfbar te/i.test(produtoNome) ? saboresElfbarTe : /elfbar ice king/i.test(produtoNome) ? saboresElfbarIceKing : /elfbar thc3000/i.test(produtoNome) ? saboresElfbarThc3000 : /elfbar thc\s*8000/i.test(produtoNome) ? saboresElfbarThc8000 : /oxbar maze/i.test(produtoNome) ? saboresOxbarMaze : /oxbar/i.test(produtoNome) ? saboresOxbar : saboresPadrao; document.querySelector('.modalCompra-sabores').innerHTML = sabores.map((sabor, indice) => `<button class="modalCompra-sabor${indice === 0 ? ' selecionado' : ''}" data-sabor="${sabor}" data-quantidade="${indice === 0 ? 1 : 0}" type="button">${textoDoSabor(sabor, indice === 0 ? 1 : 0)}</button>`).join(''); }
 			function atualizarTotal() {
 				const quantidade = Number(document.getElementById('modalQuantidade').textContent);
 				const taxaEntrega = document.querySelector('input[name="modalEntrega"]:checked')?.value === 'expressa' ? 5.90 : 0;
