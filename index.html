@@ -1405,8 +1405,29 @@
 				}
 				input.value = valorFormatado;
 			}
-			function abrirModalCompra(produtoLink) { if (produtoLink) { const produtos = Array.from(document.querySelectorAll('a.disponivel')); produtoNumero = produtos.indexOf(produtoLink) + 1; produtoNome = produtoLink.querySelector('h3') ? produtoLink.querySelector('h3').textContent.trim() : 'Combo de pizza'; const precoTexto = produtoLink.querySelector('.preco') ? produtoLink.querySelector('.preco').textContent.match(/[\d.]+,\d{2}/) : null; if (precoTexto) preco = Number(precoTexto[0].replace('.', '').replace(',', '.')); const precoOriginalTexto = produtoLink.querySelector('.precoPromocao') ? produtoLink.querySelector('.precoPromocao').textContent.match(/[\d.]+,\d{2}/) : null; if (precoOriginalTexto) precoOriginal = Number(precoOriginalTexto[0].replace('.', '').replace(',', '.')); else precoOriginal = preco; } renderizarSabores(); document.getElementById('modalCompraTitulo').textContent = produtoNome; document.getElementById('modalQuantidade').textContent = '1'; document.querySelector('input[name="modalEntrega"][value="grátis"]').checked = true; modal.classList.add('mostrar'); modal.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; atualizarTotal(); const checkoutData = { content_name: produtoNome, content_type: 'product', value: preco, currency: 'BRL' }; if (typeof window.vapewaveTrackInitiateCheckout === 'function') { window.vapewaveTrackInitiateCheckout(checkoutData); } else { window.vapewaveMetaPending = window.vapewaveMetaPending || []; window.vapewaveMetaPending.push(checkoutData); } document.getElementById('modalNome').focus(); }
-			function fecharModalCompra() { modal.classList.remove('mostrar'); modal.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; }
+			function limparEstadoPixModal() {
+				const box = document.getElementById('modalCompraPixBox');
+				const qr = document.getElementById('modalCompraPixQr');
+				const copia = document.getElementById('modalCompraPixCopia');
+				const aviso = document.getElementById('modalCompraAvisoCopia');
+				const btn = document.querySelector('.modalCompra-enviar');
+				if (box) box.classList.remove('mostrar');
+				if (qr) {
+					qr.innerHTML = '';
+					qr.textContent = '';
+				}
+				if (copia) copia.textContent = '';
+				if (aviso) {
+					aviso.textContent = '';
+					aviso.classList.remove('mostrar');
+				}
+				if (btn) {
+					btn.disabled = false;
+					btn.textContent = 'Pagar com Pix';
+				}
+			}
+			function abrirModalCompra(produtoLink) { if (produtoLink) { const produtos = Array.from(document.querySelectorAll('a.disponivel')); produtoNumero = produtos.indexOf(produtoLink) + 1; produtoNome = produtoLink.querySelector('h3') ? produtoLink.querySelector('h3').textContent.trim() : 'Combo de pizza'; const precoTexto = produtoLink.querySelector('.preco') ? produtoLink.querySelector('.preco').textContent.match(/[\d.]+,\d{2}/) : null; if (precoTexto) preco = Number(precoTexto[0].replace('.', '').replace(',', '.')); const precoOriginalTexto = produtoLink.querySelector('.precoPromocao') ? produtoLink.querySelector('.precoPromocao').textContent.match(/[\d.]+,\d{2}/) : null; if (precoOriginalTexto) precoOriginal = Number(precoOriginalTexto[0].replace('.', '').replace(',', '.')); else precoOriginal = preco; } limparEstadoPixModal(); renderizarSabores(); document.getElementById('modalCompraTitulo').textContent = produtoNome; document.getElementById('modalQuantidade').textContent = '1'; document.querySelector('input[name="modalEntrega"][value="grátis"]').checked = true; modal.classList.add('mostrar'); modal.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; atualizarTotal(); const checkoutData = { content_name: produtoNome, content_type: 'product', value: preco, currency: 'BRL' }; if (typeof window.vapewaveTrackInitiateCheckout === 'function') { window.vapewaveTrackInitiateCheckout(checkoutData); } else { window.vapewaveMetaPending = window.vapewaveMetaPending || []; window.vapewaveMetaPending.push(checkoutData); } document.getElementById('modalNome').focus(); }
+			function fecharModalCompra() { limparEstadoPixModal(); modal.classList.remove('mostrar'); modal.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; }
 			document.addEventListener('change', function (event) { if (event.target.matches('input[name="modalEntrega"]')) atualizarTotal(); });
 			document.addEventListener('input', function (event) {
 				if (event.target && event.target.id === 'modalTelefone') {
