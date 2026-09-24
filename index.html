@@ -197,6 +197,7 @@
 		#modalCompra .modalCompra-pix-box { position: relative; z-index: 2; display: none; margin: 10px 0 16px; padding: 12px; border: 1px solid #20c96b; border-radius: 12px; background: #0f1d16; }
 		#modalCompra .modalCompra-pix-box.mostrar { display: block; }
 		#modalCompra .modalCompra-pix-aviso { margin: 0 0 10px; padding: 8px 10px; border: 1px solid #80652b; border-radius: 8px; color: #ffe39a; background: #2a2414; font-size: 11px; line-height: 1.4; text-align: center; }
+		#modalCompra .modalCompra-pix-timer { margin: 0 0 10px; padding: 7px 10px; border: 1px solid rgba(255, 255, 255, .12); border-radius: 8px; color: #fff; background: rgba(255, 255, 255, .04); font-size: 12px; line-height: 1.4; text-align: center; font-weight: 700; }
 		#modalCompra .modalCompra-pix-qrcode { display: flex; align-items: center; justify-content: center; min-height: 180px; margin-bottom: 10px; padding: 8px; border: 1px solid #303439; border-radius: 10px; background: #fff; }
 		#modalCompra .modalCompra-pix-qrcode img { max-width: 180px; max-height: 180px; }
 		#modalCompra .modalCompra-pix-copia { margin: 0 0 10px; padding: 8px 10px; border: 1px solid #303439; border-radius: 8px; background: #191c20; color: #f4f4f4; word-break: break-all; font-size: 12px; line-height: 1.5; }
@@ -1162,7 +1163,7 @@
 					<label for="modalReferencia">Ponto de referência</label><input id="modalReferencia" type="text" placeholder="Próximo a... (opcional)">
 					<div class="modalCompra-entrega"><label>Tipo de entrega</label><label class="modalCompra-entrega-opcao"><input type="radio" name="modalEntrega" value="grátis" checked> Entrega grátis - 28 a 48 minutos</label><label class="modalCompra-entrega-opcao"><input type="radio" name="modalEntrega" value="expressa"> Entrega expressa - 15 a 30 minutos<strong>+ R$ 5,90</strong></label></div>
 				</form>
-				<footer class="modalCompra-rodape"><label>Forma de pagamento</label><div class="modalCompra-pix">Pix</div><div class="modalCompra-total"><span>Total</span><strong id="modalCompraTotal">R$ 0,00</strong></div><div id="modalCompraSubtotal" class="modalCompra-subtotal" aria-live="polite"></div><div id="modalCompraPixBox" class="modalCompra-pix-box" aria-live="polite"><div class="modalCompra-pix-aviso">Após o pagamento, você será redirecionado para acompanhar a entrega em tempo real.</div><div class="modalCompra-pix-qrcode" id="modalCompraPixQr"></div><div class="modalCompra-pix-copia" id="modalCompraPixCopia"></div><button class="modalCompra-botao-copia" id="modalCompraPixCopiar" type="button">Copiar código Pix</button><div id="modalCompraAvisoCopia" class="modalCompra-aviso-copia" role="status" aria-live="polite"></div></div><button class="modalCompra-enviar" type="submit" form="formModalCompra">Pagar com Pix</button></footer>
+				<footer class="modalCompra-rodape"><label>Forma de pagamento</label><div class="modalCompra-pix">Pix</div><div class="modalCompra-total"><span>Total</span><strong id="modalCompraTotal">R$ 0,00</strong></div><div id="modalCompraSubtotal" class="modalCompra-subtotal" aria-live="polite"></div><div id="modalCompraPixBox" class="modalCompra-pix-box" aria-live="polite"><div class="modalCompra-pix-aviso">Após o pagamento, você será redirecionado para acompanhar a entrega em tempo real.</div><div id="modalCompraPixTimer" class="modalCompra-pix-timer" aria-live="polite">Garanta seu prazo de entrega e aproveite a promoção! Pagamento expira em: 07:00</div><div class="modalCompra-pix-qrcode" id="modalCompraPixQr"></div><div class="modalCompra-pix-copia" id="modalCompraPixCopia"></div><button class="modalCompra-botao-copia" id="modalCompraPixCopiar" type="button">Copiar código Pix</button><div id="modalCompraAvisoCopia" class="modalCompra-aviso-copia" role="status" aria-live="polite"></div></div><button class="modalCompra-enviar" type="submit" form="formModalCompra">Pagar com Pix</button></footer>
 			</section>
 		</div>
 		<div id="info">
@@ -1438,18 +1439,44 @@
 				}
 				input.value = valorFormatado;
 			}
+			function formatarTempoPixVisual(segundos) {
+				const total = Math.max(0, segundos);
+				const minutos = String(Math.floor(total / 60)).padStart(2, '0');
+				const segundosRestantes = String(total % 60).padStart(2, '0');
+				return minutos + ':' + segundosRestantes;
+			}
+			function iniciarTimerPixVisual() {
+				const timer = document.getElementById('modalCompraPixTimer');
+				if (!timer) return;
+				clearInterval(window.modalCompraPixTimerInterval);
+				let tempoRestante = 7 * 60;
+				timer.textContent = 'Garanta seu prazo de entrega e aproveite a promoção! Pagamento expira em: ' + formatarTempoPixVisual(tempoRestante);
+				window.modalCompraPixTimerInterval = setInterval(() => {
+					tempoRestante = Math.max(0, tempoRestante - 1);
+					timer.textContent = 'Garanta seu prazo de entrega e aproveite a promoção! Pagamento expira em: ' + formatarTempoPixVisual(tempoRestante);
+					if (tempoRestante <= 0) {
+						clearInterval(window.modalCompraPixTimerInterval);
+					}
+				}, 1000);
+			}
 			function limparEstadoPixModal() {
 				const box = document.getElementById('modalCompraPixBox');
 				const qr = document.getElementById('modalCompraPixQr');
 				const copia = document.getElementById('modalCompraPixCopia');
 				const aviso = document.getElementById('modalCompraAvisoCopia');
+				const timer = document.getElementById('modalCompraPixTimer');
 				const btn = document.querySelector('.modalCompra-enviar');
+				if (window.modalCompraPixTimerInterval) {
+					clearInterval(window.modalCompraPixTimerInterval);
+					window.modalCompraPixTimerInterval = null;
+				}
 				if (box) box.classList.remove('mostrar');
 				if (qr) {
 					qr.innerHTML = '';
 					qr.textContent = '';
 				}
 				if (copia) copia.textContent = '';
+				if (timer) timer.textContent = 'Garanta seu prazo de entrega e aproveite a promoção! Pagamento expira em: 07:00';
 				if (aviso) {
 					aviso.textContent = '';
 					aviso.classList.remove('mostrar');
@@ -1525,6 +1552,7 @@
 					}
 					const copia = document.getElementById('modalCompraPixCopia');
 					if (box) box.classList.add('mostrar');
+					iniciarTimerPixVisual();
 					const codigoPix = dados.qr_code || dados.pix_code || '';
 					const imagemQr = dados.qr_code_base64 || dados.pix_qr_code_base64 || '';
 					if (qr) {
