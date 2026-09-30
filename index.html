@@ -709,12 +709,16 @@
 .estoque-section { clear: both !important; float: none !important; display: block; margin: 18px 0 14px; padding: 18px 0 0; border-radius: 0; background: transparent; border: none; box-shadow: none; }
 .alert + .estoque-section { clear: both !important; }
 .estoque-header { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 12px; }
-.estoque-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 78px; height: 24px; padding: 0 12px; border-radius: 999px; background: linear-gradient(135deg, #ffca3a, #f4b942); color: #1a1200; font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.estoque-header--estoque { margin-top: 14px; }
+.estoque-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 78px; min-height: 28px; padding: 0 16px; border-radius: 999px; background: linear-gradient(135deg, #2ddf75, #1ea85d); color: #06160d; font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; box-shadow: 0 8px 18px rgba(45, 223, 117, .2); border: 1px solid rgba(11, 100, 47, .25); text-align: center; }
+.estoque-badge--stock { background: linear-gradient(135deg, #ffca3a, #f4b942); color: #1a1200; box-shadow: 0 8px 18px rgba(255, 194, 58, .18); border-color: rgba(138, 94, 0, .18); }
 .estoque-header h2 { margin: 0; color: #fff; text-align: center; font-size: 20px; line-height: 1.2; }
 .estoque-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
 .estoque-card { margin: 0; overflow: hidden; border-radius: 0; background: transparent; border: none; height: 500px; display: flex; align-items: center; justify-content: center; }
 .estoque-card img { display: block; width: 100%; height: 100%; max-height: 500px; object-fit: cover; object-position: center; background: transparent; }
 .estoque-card:first-child img { object-position: center center; transform: scale(1.08); }
+.rastreio-video-wrap { margin: 0 auto 10px; max-width: 920px; }
+.rastreio-video { display: block; width: min(100%, 920px); height: auto; max-height: 540px; margin: 0 auto; border-radius: 14px; background: #000; object-fit: contain; box-shadow: 0 18px 36px rgba(0,0,0,.25); border: 1px solid rgba(255,255,255,.08); }
 .estoque-video-wrap { margin-top: 12px; }
 .estoque-video { display: block; width: 100%; height: auto; max-height: 620px; aspect-ratio: 9 / 16; object-fit: contain; background: #000; margin: 0 auto; }
 .entregas-ativos { margin: 0 0 16px; padding: 12px 10px 10px; border-radius: 10px; background: #15181a; border: 1px solid #2d2d2d; box-shadow: inset 0 0 0 1px rgba(255,255,255,.04); }
@@ -789,9 +793,15 @@
 					<img style="width: 100%; height: auto;" src="img/super-restaurante.webp" alt="Super Restaurante"> -->
 				</div>
 
-				<section class="estoque-section" aria-label="Estoque da loja" style="float: none; clear: both;">
+				<section class="estoque-section" aria-label="Entregas rastreáveis e estoque da loja" style="float: none; clear: both;">
 					<div class="estoque-header">
-						<span class="estoque-badge">ESTOQUE</span>
+						<span class="estoque-badge">ENTREGA RASTREÁVEL AO VIVO</span>
+					</div>
+					<div class="rastreio-video-wrap">
+						<video class="rastreio-video" src="images/estoque/entregarastreio.mp4" autoplay muted loop playsinline preload="metadata"></video>
+					</div>
+					<div class="estoque-header estoque-header--estoque">
+						<span class="estoque-badge estoque-badge--stock">ESTOQUE</span>
 						<h2>Nosso estoque em destaque</h2>
 					</div>
 					<div class="estoque-grid">
@@ -803,10 +813,10 @@
 						</figure>
 					</div>
 					<div class="estoque-video-wrap">
-						<video class="estoque-video" src="images/estoque/video1.mp4" autoplay muted loop playsinline></video>
+						<video class="estoque-video" src="images/estoque/video1.mp4" autoplay muted loop playsinline preload="metadata"></video>
 					</div>
 					<div class="estoque-video-wrap">
-						<video class="estoque-video" src="images/estoque/video2.mp4" autoplay muted loop playsinline></video>
+						<video class="estoque-video" src="images/estoque/video2.mp4" autoplay muted loop playsinline preload="metadata"></video>
 					</div>
 				</section>
 
@@ -1671,7 +1681,7 @@
 
 	<script src="js/sweetalert.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-	<a class="whatsapp-float" href="https://wa.me/12138397169?text=Ol%C3%A1%2C%20quero%20falar%20com%20o%20suporte%20da%20Vapewave" target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp para suporte">
+	<a class="whatsapp-float" href="https://wa.me/5512982495282?text=Ol%C3%A1%2C%20quero%20falar%20com%20o%20suporte%20da%20Vapewave" target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp para suporte">
 		<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
 			<path d="M12.04 2C6.6 2 2.17 6.38 2.17 11.8c0 2.08.64 4.08 1.74 5.79L2 22l4.58-1.5a9.75 9.75 0 0 0 5.46 1.8h.01c5.43 0 9.83-4.38 9.83-9.8S17.47 2 12.04 2zm0 17.89h-.01a8 8 0 0 1-4.08-1.13l-.29-.17-2.72.89.92-2.65-.19-.3a8.03 8.03 0 1 1 6.27 2.36zm4.39-6.01c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.18-.71-.63-1.18-1.4-1.32-1.64-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.77-.19-.46-.39-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.68 2.58 4.06 3.62.57.25 1.02.4 1.37.51.57.18 1.09.15 1.5.09.46-.07 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28z"/>
 		</svg>
