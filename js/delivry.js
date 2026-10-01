@@ -244,9 +244,6 @@ $(document).ready(function () {
 										beforeSend: function () { },
 										success: function (data) {
 											$('#modalCarregando').hide();
-											if (pixel != "") {
-												fbq('track', 'AddToCart');
-											}
 											let produto = $('#produto').html();
 											if ($('.lojaFechada').length > 0 || produto == undefined) {
 												window.location.href = "loja/" + urlLoja;
