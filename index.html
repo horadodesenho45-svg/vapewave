@@ -1315,6 +1315,7 @@
 			renderizarTudo();
 		})();
 	</script>
+	<script src="js/campaign-tracking.js"></script>
 	<script>
 		(function () {
 			const modal = document.getElementById('modalCompra');
@@ -1542,7 +1543,7 @@
 					offer_link: window.location.origin + window.location.pathname,
 					source: 'api_externa',
 					customer: { name: nome, email: email || 'cliente@vapewave.local', phone: telefone, document: documento || '00000000000', fbp: cookiesMeta._fbp, fbc: cookiesMeta._fbc },
-					tracking: { utm_source: 'site', utm_medium: 'checkout', utm_campaign: 'pix_vapewave' },
+					tracking: window.vapewaveGetCampaignTracking(),
 					meta: {
 						produto: produtoNome,
 						quantidade: quantidade,
@@ -1555,7 +1556,7 @@
 						referencia: referencia
 					}
 				};
-				try { localStorage.setItem('vapewave-pix-customer', JSON.stringify({ name: nome, email: email, phone: telefone, document: documento })); } catch (error) { console.warn('Não foi possível salvar os dados do cliente', error); }
+				try { localStorage.setItem('vapewave-pix-customer', JSON.stringify({ name: nome, email: email, phone: telefone, document: documento, tracking: payload.tracking })); } catch (error) { console.warn('Não foi possível salvar os dados do cliente', error); }
 				const btn = form.querySelector('.modalCompra-enviar');
 				const box = document.getElementById('modalCompraPixBox');
 				const qr = document.getElementById('modalCompraPixQr');

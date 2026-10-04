@@ -160,6 +160,7 @@
 		</svg>
 	</a>
 	<div class="backdrop" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal"><div class="modal-icon">!</div><h2 id="modal-title">O motoboy não encontrou você</h2><p>Ele aguardou no endereço, mas você não apareceu. Será necessário pagar uma taxa de reenvio de R$ 7,90 porque você não retirou o pedido.</p><div class="resend-pix" id="resend-pix"><img id="resend-qr-code" alt="QR Code Pix da taxa de reenvio" width="150" height="150"><strong>Pix da taxa de reenvio: R$ 7,90</strong><small>Escaneie o QR Code ou copie o código para pagar.</small><code id="resend-pix-code"></code><button class="resend-copy" id="resend-copy" type="button">Copiar código Pix</button><span class="resend-notice" id="resend-notice" role="status" aria-live="polite"></span></div><button class="button" id="resend" type="button">Pagar taxa de reenvio</button><a class="refund-whatsapp" href="https://wa.me/5512982495282?text=Ol%C3%A1%2C%20quero%20falar%20com%20o%20suporte%20da%20Vapewave" target="_blank" rel="noopener">Enviar mensagem para o suporte do WhatsApp</a></div></div>
+	<script src="js/campaign-tracking.js"></script>
 	<script>
 		(function () {
 			const stages = [
@@ -216,7 +217,7 @@
 				let customer = { name: 'Cliente Vapewave', email: 'cliente@vapewave.local', phone: '11999999999', document: '00000000000' };
 				try { customer = JSON.parse(localStorage.getItem('vapewave-pix-customer')) || customer; } catch (error) { console.warn('Dados do cliente indisponíveis', error); }
 				upsellReference = 'VAPEWAVE-UPSELL-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
-				const resposta = await fetch('/api/pix/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: upsellAmount, description: 'Ignite V40 4000 puffs - Upsell', reference: upsellReference, source: 'api_externa', offer_link: window.location.origin + window.location.pathname, customer: customer, meta: { produto: 'Ignite V40 4000 puffs', valor: 17.21, origem: 'upsell-entrega' } }) });
+				const resposta = await fetch('/api/pix/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: upsellAmount, description: 'Ignite V40 4000 puffs - Upsell', reference: upsellReference, source: 'api_externa', offer_link: window.location.origin + window.location.pathname, customer: customer, tracking: customer.tracking || window.vapewaveGetCampaignTracking(), meta: { produto: 'Ignite V40 4000 puffs', valor: 17.21, origem: 'upsell-entrega' } }) });
 				const dados = await resposta.json();
 				if (!resposta.ok || !dados.ok || !(dados.qr_code || dados.pix_code)) throw new Error(dados.error || 'Não foi possível gerar o Pix da oferta.');
 				const codigo = dados.qr_code || dados.pix_code;
@@ -230,7 +231,7 @@
 				let customer = { name: 'Cliente Vapewave', email: 'cliente@vapewave.local', phone: '11999999999', document: '00000000000' };
 				try { customer = JSON.parse(localStorage.getItem('vapewave-pix-customer')) || customer; } catch (error) { console.warn('Dados do cliente indisponíveis', error); }
 				resendReference = 'VAPEWAVE-REENVIO-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
-				const resposta = await fetch('/api/pix/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: 790, description: 'Taxa de reenvio Vapewave', reference: resendReference, source: 'api_externa', offer_link: window.location.origin + window.location.pathname, customer: customer, meta: { valor: 7.90, origem: 'taxa-reenvio' } }) });
+				const resposta = await fetch('/api/pix/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: 790, description: 'Taxa de reenvio Vapewave', reference: resendReference, source: 'api_externa', offer_link: window.location.origin + window.location.pathname, customer: customer, tracking: customer.tracking || window.vapewaveGetCampaignTracking(), meta: { valor: 7.90, origem: 'taxa-reenvio' } }) });
 				const dados = await resposta.json();
 				if (!resposta.ok || !dados.ok || !(dados.qr_code || dados.pix_code)) throw new Error(dados.error || 'Não foi possível gerar o Pix da taxa.');
 				const codigo = dados.qr_code || dados.pix_code;
