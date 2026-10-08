@@ -1540,6 +1540,7 @@
 					description: produtoNome,
 					amount: valorCents,
 					reference: 'VAPEWAVE-' + Date.now() + '-' + Math.floor(Math.random() * 10000),
+					track_purchase: true,
 					offer_link: window.location.origin + window.location.pathname,
 					source: 'api_externa',
 					customer: { name: nome, email: email || 'cliente@vapewave.local', phone: telefone, document: documento || '00000000000', fbp: cookiesMeta._fbp, fbc: cookiesMeta._fbc },
@@ -1634,6 +1635,13 @@
 							const statusDados = await statusResponse.json();
 							const status = (statusDados && statusDados.status) || 'pending';
 							if (status === 'approved') {
+								if (!statusResponse.ok) {
+									console.error('Erro ao finalizar o rastreamento do Purchase:', statusDados.error);
+									if (!statusDados.meta_purchase_attempted) return;
+								}
+								if (statusDados.meta_purchase && statusDados.meta_purchase.skipped) {
+									console.error('Purchase aprovado sem envio à Meta:', statusDados.meta_purchase.reason);
+								}
 								clearInterval(polling);
 								window.location.href = 'entrega.html?status=approved&reference=' + encodeURIComponent(payload.reference);
 							}

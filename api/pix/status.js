@@ -1,3 +1,5 @@
+const { sendApprovedPurchase } = require('../_lib/purchase-store');
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -51,11 +53,30 @@ module.exports = async function handler(req, res) {
 
     const payload = Array.isArray(data) ? data[0] : data;
     const status = (payload && (payload.status || payload.transaction_status || payload.state)) || 'pending';
+    let metaPurchase = null;
+
+    if (status === 'approved') {
+      try {
+        metaPurchase = await sendApprovedPurchase(reference);
+      } catch (error) {
+        console.error('Falha ao enviar Purchase aprovado para a Meta.', error);
+        return res.status(502).json({
+          ok: false,
+          error: error.code === 'META_PURCHASE_ATTEMPT_FAILED'
+            ? 'Pagamento aprovado; a tentativa única de envio do Purchase falhou. Verifique os logs do Vercel.'
+            : 'Pagamento aprovado; não foi possível verificar o envio do Purchase. A consulta pode ser repetida.',
+          meta_purchase_attempted: error.code === 'META_PURCHASE_ATTEMPT_FAILED',
+          status,
+          reference
+        });
+      }
+    }
 
     return res.status(200).json({
       ok: true,
       status,
       reference,
+      meta_purchase: metaPurchase,
       transaction: payload || null
     });
   } catch (error) {

@@ -1,3 +1,5 @@
+const { savePurchaseOrder, removePendingPurchaseOrder } = require('../_lib/purchase-store');
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -10,6 +12,9 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ ok: false, error: 'Método não permitido.' });
   }
+
+  let trackPurchase = false;
+  let purchaseReference = '';
 
   try {
     const apiKey = process.env.PARADISE_API_KEY || process.env.PARADISE_SECRET_KEY;
@@ -26,6 +31,7 @@ module.exports = async function handler(req, res) {
     const amount = Number(body.amount ?? 0);
     const description = String(body.description || 'Pedido Vapewave');
     const reference = String(body.reference || `VAPEWAVE-${Date.now()}`);
+    purchaseReference = reference;
     const customer = body.customer || {
       name: 'Cliente Vapewave',
       email: 'cliente@vapewave.local',
@@ -57,6 +63,29 @@ module.exports = async function handler(req, res) {
       meta: body.meta || {}
     };
 
+    trackPurchase = body.track_purchase === true;
+    if (trackPurchase) {
+      try {
+        await savePurchaseOrder({
+          reference,
+          amount,
+          description,
+          customer,
+          tracking: payload.tracking,
+          eventSourceUrl: payload.offer_link,
+          request: req
+        });
+      } catch (error) {
+        if (error.code === 'PURCHASE_REFERENCE_EXISTS') {
+          return res.status(409).json({ ok: false, error: error.message });
+        }
+        return res.status(503).json({
+          ok: false,
+          error: error && error.message ? error.message : 'Não foi possível preparar o rastreamento seguro desta compra.'
+        });
+      }
+    }
+
     const response = await fetch(`${baseUrl}/api/v1/transaction.php`, {
       method: 'POST',
       headers: {
@@ -76,6 +105,13 @@ module.exports = async function handler(req, res) {
     }
 
     if (!response.ok) {
+      if (trackPurchase) {
+        try {
+          await removePendingPurchaseOrder(reference);
+        } catch (cleanupError) {
+          console.error('Falha ao remover registro de Purchase sem transação criada.', cleanupError);
+        }
+      }
       const message = (data && (data.message || data.error || data.details)) || 'Erro ao criar a transação PIX.';
       return res.status(response.status || 500).json({ ok: false, error: String(message), raw: data });
     }
@@ -97,6 +133,13 @@ module.exports = async function handler(req, res) {
       raw: data
     });
   } catch (error) {
+    if (trackPurchase && purchaseReference) {
+      try {
+        await removePendingPurchaseOrder(purchaseReference);
+      } catch (cleanupError) {
+        console.error('Falha ao remover registro de Purchase após erro na criação do Pix.', cleanupError);
+      }
+    }
     return res.status(500).json({
       ok: false,
       error: error && error.message ? error.message : 'Erro inesperado ao processar a transação PIX.'
