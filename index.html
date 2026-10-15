@@ -119,39 +119,6 @@
 		.toast-text strong { display: block; margin-bottom: 2px; color: #222; }
 		@media (max-width: 480px) { .social-toast { bottom: max(12px, env(safe-area-inset-bottom)); padding: 10px; gap: 8px; font-size: 11px; } .toast-img { flex-basis: 30px; width: 30px; height: 30px; } }
 
-		.whatsapp-float {
-			position: fixed;
-			right: 18px;
-			bottom: max(18px, env(safe-area-inset-bottom));
-			z-index: 1500;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			width: 58px;
-			height: 58px;
-			border-radius: 50%;
-			background: #25d366;
-			box-shadow: 0 12px 25px rgba(37, 211, 102, .38);
-			transition: transform .2s ease, box-shadow .2s ease;
-		}
-		.whatsapp-float:hover {
-			transform: translateY(-2px) scale(1.02);
-			box-shadow: 0 16px 30px rgba(37, 211, 102, .46);
-		}
-		.whatsapp-float svg {
-			width: 30px;
-			height: 30px;
-			fill: #fff;
-		}
-		@media (max-width: 480px) {
-			.whatsapp-float {
-				right: 14px;
-				bottom: max(14px, env(safe-area-inset-bottom));
-				width: 54px;
-				height: 54px;
-			}
-		}
-
 		#modalCompra { position: fixed; inset: 0; z-index: 1100; display: none; overflow: hidden; background: rgba(0, 0, 0, .72); }
 		#modalCompra.mostrar { display: flex; align-items: stretch; justify-content: center; }
 		#modalCompra .modalCompra-conteudo { width: min(100%, 430px); height: 100%; max-height: 100dvh; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; background: #101214; color: #f4f4f4; box-shadow: 0 0 35px rgba(0, 0, 0, .45); }
@@ -499,7 +466,7 @@
 									<h3>ELFBAR THC3000 3G</h3>
 									<span>O THC (tetra-hidrocanabinol) é o principal composto psicoativo da planta da cannabis (maconha). É a substância responsável pela sensação de "barato"</span>
 									de <span class="precoPromocao">R$ 352,00</span> por
-									<span class="preco"> R$ 303,62 </span>
+									<span class="preco"> R$ 164,39 </span>
 								</div>
 								<div class="fotoProduto">
 									<figure>
@@ -549,7 +516,7 @@
 									border-radius: 8px; text-align: left;">COM 8G de THC<b></b>!</span>
 									de <span class="precoPromocao">R$ 463,80</span> por
 									<span class="preco" style="font-size: 20px;"> <b style="background: #077c22; color: white; border-radius: 8px; padding: 0px 4px;">R$
-											389,42</b> </span>
+											189,42</b> </span>
 									<span><i>A maioria dos clientes escolhe esse porque é o melhor
 											custo-benefício!</i></span>
 									<span class="estoque" style="margin-top: 4px;">🔥 Apenas <b style="background: red; color: white; border-radius: 8px; padding: 0px 4px;"><span id="estoqueCombo"></span>2
@@ -707,14 +674,24 @@
 .estoque-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 78px; min-height: 28px; padding: 0 16px; border-radius: 999px; background: linear-gradient(135deg, #2ddf75, #1ea85d); color: #06160d; font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; box-shadow: 0 8px 18px rgba(45, 223, 117, .2); border: 1px solid rgba(11, 100, 47, .25); text-align: center; }
 .estoque-badge--stock { background: linear-gradient(135deg, #ffca3a, #f4b942); color: #1a1200; box-shadow: 0 8px 18px rgba(255, 194, 58, .18); border-color: rgba(138, 94, 0, .18); }
 .estoque-header h2 { margin: 0; color: #fff; text-align: center; font-size: 20px; line-height: 1.2; }
-.estoque-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
-.estoque-card { margin: 0; overflow: hidden; border-radius: 0; background: transparent; border: none; height: 500px; display: flex; align-items: center; justify-content: center; }
-.estoque-card img { display: block; width: 100%; height: 100%; max-height: 500px; object-fit: cover; object-position: center; background: transparent; }
-.estoque-card:first-child img { object-position: center center; transform: scale(1.08); }
-.rastreio-video-wrap { margin: 0 auto 10px; max-width: 920px; }
-.rastreio-video { display: block; width: min(100%, 920px); height: auto; max-height: 540px; margin: 0 auto; border-radius: 14px; background: #000; object-fit: contain; box-shadow: 0 18px 36px rgba(0,0,0,.25); border: 1px solid rgba(255,255,255,.08); }
-.estoque-video-wrap { margin-top: 12px; }
-.estoque-video { display: block; width: 100%; height: auto; max-height: 620px; aspect-ratio: 9 / 16; object-fit: contain; background: #000; margin: 0 auto; }
+.rastreio-imagem-wrap { margin: 0 auto 10px; max-width: 920px; }
+.rastreio-imagem, .estoque-entrega-imagem { display: block; width: 100%; max-height: 540px; margin: 0 auto; border: 1px solid rgba(255,255,255,.08); border-radius: 14px; background: #111; object-fit: contain; box-shadow: 0 18px 36px rgba(0,0,0,.25); }
+.estoque-fotos-fixas { display: grid; gap: 14px; max-width: 380px; margin: 0 auto; }
+.estoque-foto-destaque { display: block; width: 100%; height: auto; max-height: 540px; border: 1px solid rgba(255,255,255,.1); border-radius: 14px; background: #111; object-fit: contain; box-shadow: 0 12px 28px rgba(0,0,0,.2); }
+.estoque-entrega-wrap { margin-top: 12px; }
+.estoque-entrega-imagem { max-width: 620px; }
+.estoque-carousel { max-width: 380px; margin: 16px auto 0; padding: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,.1); border-radius: 14px; background: #151819; box-shadow: 0 12px 28px rgba(0,0,0,.2); }
+.estoque-carousel-stage { display: grid; place-items: center; overflow: hidden; border-radius: 9px; background: #101214; }
+.estoque-carousel-slide { display: block; width: 100%; max-width: 340px; height: auto; max-height: 540px; object-fit: contain; }
+.estoque-carousel-slide[hidden] { display: none; }
+.estoque-carousel-controls { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 10px; }
+.estoque-carousel-controls button, .estoque-carousel-dot { display: inline-grid; place-items: center; border: 1px solid rgba(255,255,255,.18); background: #202426; color: #fff; cursor: pointer; }
+.estoque-carousel-controls button { width: 36px; height: 36px; border-radius: 50%; font-size: 22px; line-height: 1; }
+.estoque-carousel-controls button:hover, .estoque-carousel-dot[aria-pressed="true"] { border-color: #20c96b; background: #20c96b; color: #07130b; }
+.estoque-carousel-status { min-width: 38px; margin: 0; color: #d7d9da; font-size: 12px; font-weight: 700; text-align: center; }
+.estoque-carousel-dots { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
+.estoque-carousel-dot { width: 9px; height: 9px; padding: 0; border-radius: 50%; }
+.estoque-carousel button:focus-visible { outline: 2px solid #8ff3b5; outline-offset: 3px; }
 .entregas-ativos { margin: 0 0 16px; padding: 12px 10px 10px; border-radius: 10px; background: #15181a; border: 1px solid #2d2d2d; box-shadow: inset 0 0 0 1px rgba(255,255,255,.04); }
 .entregas-ativos-header { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 10px; }
 .entregas-ativos-header .label { display: inline-flex; align-items: center; justify-content: center; min-width: 70px; height: 22px; padding: 0 10px; border-radius: 999px; background: linear-gradient(135deg, #16d460, #20c96b); color: #06130d; font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
@@ -740,7 +717,7 @@
 		.revenda-pods-cta { position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; min-width: 190px; padding: 13px 18px; border: 0; border-radius: 6px; background: #20c96b; color: #07130b !important; font-size: 14px; font-weight: 800; text-align: center; text-decoration: none; box-shadow: 0 6px 18px rgba(32, 201, 107, .25); transition: transform .2s ease, background .2s ease; }
 		.revenda-pods-cta:hover { background: #8ff3b5; transform: translateY(-2px); }
 		.revenda-pods-aviso { margin-top: 8px !important; color: #a9cdb5 !important; font-size: 11px !important; }
-@media (max-width: 700px) { .estoque-grid { grid-template-columns: 1fr; } .estoque-card { height: 520px; } .estoque-card img { max-height: 520px; } .estoque-card:first-child img { transform: scale(1.12); } .estoque-video { max-height: 560px; } }
+@media (max-width: 700px) { .estoque-carousel { margin-top: 12px; padding: 8px; } }
 @media (max-width: 560px) { .equipe-entrega { grid-template-columns: 1fr; } .equipe-entrega img { height: 190px; } }
 		@media (max-width: 560px) { .revenda-pods { grid-template-columns: 1fr; padding: 20px 16px; } .revenda-pods-cta { width: 100%; } }
 @media (min-width: 640px) {
@@ -791,28 +768,88 @@
 					<div class="estoque-header">
 						<span class="estoque-badge">ENTREGA RASTREÁVEL AO VIVO</span>
 					</div>
-					<div class="rastreio-video-wrap">
-						<video class="rastreio-video" src="images/estoque/entregarastreio.mp4" autoplay muted loop playsinline preload="metadata"></video>
+					<div class="rastreio-imagem-wrap">
+						<img class="rastreio-imagem" src="images/deliveyr.png" alt="Acompanhe sua entrega em tempo real" loading="lazy">
 					</div>
 					<div class="estoque-header estoque-header--estoque">
 						<span class="estoque-badge estoque-badge--stock">ESTOQUE</span>
 						<h2>Nosso estoque em destaque</h2>
 					</div>
-					<div class="estoque-grid">
-						<figure class="estoque-card">
-							<img src="images/estoque/foto1.png" alt="Estoque de produtos 1" loading="lazy">
-						</figure>
-						<figure class="estoque-card">
-							<img src="images/estoque/foto2.png" alt="Estoque de produtos 2" loading="lazy">
-						</figure>
+					<div class="estoque-fotos-fixas">
+						<img class="estoque-foto-destaque" src="images/estoque/foto1.png" alt="Estoque de produtos, foto 1" loading="lazy">
+						<img class="estoque-foto-destaque" src="images/estoque/foto2.png" alt="Estoque de produtos, foto 2" loading="lazy">
 					</div>
-					<div class="estoque-video-wrap">
-						<video class="estoque-video" src="images/estoque/video1.mp4" autoplay muted loop playsinline preload="metadata"></video>
+					<div class="estoque-entrega-wrap">
+						<img class="estoque-entrega-imagem" src="images/fotoentrega.png" alt="Pedido da Vapewave chegando em até 30 minutos" loading="lazy">
 					</div>
-					<div class="estoque-video-wrap">
-						<video class="estoque-video" src="images/estoque/video2.mp4" autoplay muted loop playsinline preload="metadata"></video>
+					<div class="estoque-carousel" id="estoqueCarousel" role="region" aria-label="Fotos do estoque" aria-roledescription="carrossel">
+						<div class="estoque-carousel-stage">
+							<img class="estoque-carousel-slide" src="images/estoque1.png" alt="Estoque de produtos, foto 3" loading="lazy">
+							<img class="estoque-carousel-slide" src="images/estoque2.png" alt="Estoque de produtos, foto 4" loading="lazy" hidden>
+						</div>
+						<div class="estoque-carousel-controls">
+							<button type="button" class="estoque-carousel-prev" aria-label="Mostrar foto anterior">‹</button>
+							<p class="estoque-carousel-status" aria-live="polite">1 / 2</p>
+							<button type="button" class="estoque-carousel-next" aria-label="Mostrar próxima foto">›</button>
+						</div>
+						<div class="estoque-carousel-dots" aria-label="Selecionar foto">
+							<button type="button" class="estoque-carousel-dot" aria-label="Mostrar foto 1" aria-pressed="true"></button>
+							<button type="button" class="estoque-carousel-dot" aria-label="Mostrar foto 2" aria-pressed="false"></button>
+						</div>
 					</div>
 				</section>
+				<script>
+					(function () {
+						const carousel = document.getElementById('estoqueCarousel');
+						if (!carousel) return;
+
+						const slides = Array.from(carousel.querySelectorAll('.estoque-carousel-slide'));
+						const dots = Array.from(carousel.querySelectorAll('.estoque-carousel-dot'));
+						const status = carousel.querySelector('.estoque-carousel-status');
+						let currentSlide = 0;
+						let timer;
+
+						function showSlide(index) {
+							currentSlide = (index + slides.length) % slides.length;
+							slides.forEach((slide, slideIndex) => {
+								slide.hidden = slideIndex !== currentSlide;
+								dots[slideIndex].setAttribute('aria-pressed', String(slideIndex === currentSlide));
+							});
+							status.textContent = (currentSlide + 1) + ' / ' + slides.length;
+						}
+
+						function stopAutoplay() {
+							window.clearInterval(timer);
+						}
+
+						function startAutoplay() {
+							stopAutoplay();
+							if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+								timer = window.setInterval(() => showSlide(currentSlide + 1), 5000);
+							}
+						}
+
+						carousel.querySelector('.estoque-carousel-prev').addEventListener('click', () => {
+							showSlide(currentSlide - 1);
+							startAutoplay();
+						});
+						carousel.querySelector('.estoque-carousel-next').addEventListener('click', () => {
+							showSlide(currentSlide + 1);
+							startAutoplay();
+						});
+						dots.forEach((dot, index) => dot.addEventListener('click', () => {
+							showSlide(index);
+							startAutoplay();
+						}));
+						carousel.addEventListener('mouseenter', stopAutoplay);
+						carousel.addEventListener('mouseleave', startAutoplay);
+						carousel.addEventListener('focusin', stopAutoplay);
+						carousel.addEventListener('focusout', event => {
+							if (!carousel.contains(event.relatedTarget)) startAutoplay();
+						});
+						startAutoplay();
+					})();
+				</script>
 
 				<div class="categoria">
 					<div class="produtos">
@@ -1705,11 +1742,6 @@
 
 	<script src="js/sweetalert.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-	<a class="whatsapp-float" href="https://wa.me/5512982495282?text=Ol%C3%A1%2C%20quero%20falar%20com%20o%20suporte%20da%20Vapewave" target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp para suporte">
-		<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-			<path d="M12.04 2C6.6 2 2.17 6.38 2.17 11.8c0 2.08.64 4.08 1.74 5.79L2 22l4.58-1.5a9.75 9.75 0 0 0 5.46 1.8h.01c5.43 0 9.83-4.38 9.83-9.8S17.47 2 12.04 2zm0 17.89h-.01a8 8 0 0 1-4.08-1.13l-.29-.17-2.72.89.92-2.65-.19-.3a8.03 8.03 0 1 1 6.27 2.36zm4.39-6.01c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.18-.71-.63-1.18-1.4-1.32-1.64-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.77-.19-.46-.39-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.68 2.58 4.06 3.62.57.25 1.02.4 1.37.51.57.18 1.09.15 1.5.09.46-.07 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28z"/>
-		</svg>
-	</a>
 	<div id="toast" class="social-toast">
         <div class="toast-img" id="toastInitial">M</div>
         <div class="toast-text">
