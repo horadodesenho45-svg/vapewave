@@ -141,8 +141,9 @@
 	<div class="page-notice" role="status"><strong>Aviso:</strong> não atualize a página ou feche para não dar erro na atualização em tempo real.</div>
 	<main class="page">
 		<div class="intro"><div><div class="eyebrow">Entrega em andamento</div><h1>Acompanhe seu pedido</h1></div><div class="eta"><strong id="eta">25 min</strong>tempo restante estimado</div></div>
-		<div class="upsell-offer" id="upsell-offer"><img src="images/upsell.jpg" alt="Ignite V40 de sabor sortido" width="74" height="74"><div class="upsell-copy"><small class="upsell-kicker">Oferta durante a separação</small><strong>Ignite V40 4000 puffs · sabor sortido</strong><span class="upsell-benefit">Preço de custo só para você.</span><span class="upsell-gift">BRINDE EXCLUSIVO</span><span class="upsell-price"><s>De R$ 34,33</s> por R$ 17,21 50%off</span></div><div class="upsell-action"><strong class="upsell-timer" id="upsell-timer">05:00</strong><button class="upsell-button" id="upsell-button" type="button">Comprar também</button></div><div class="upsell-pix" id="upsell-pix"><img id="upsell-qr-code" alt="QR Code Pix" width="132" height="132"><div class="upsell-pix-copy"><strong>Pagamento Pix</strong><small>Escaneie o QR Code ou copie o código para pagar R$ 17,21.</small><code class="upsell-pix-code" id="upsell-pix-code"></code><button class="upsell-copy-button" id="upsell-copy-button" type="button">Copiar código Pix</button><span class="upsell-copy-notice" id="upsell-copy-notice" role="status" aria-live="polite"></span></div></div></div>
-		<p class="upsell-confirmation" id="upsell-confirmation">Se você pagou a oferta, o Ignite V40 foi incluído no seu pedido. Não se preocupe.</p>
+		<div class="upsell-offer" id="upsell-v40-offer"><img src="images/upsell.jpg" alt="Ignite V40 de sabor sortido" width="74" height="74"><div class="upsell-copy"><small class="upsell-kicker">Oferta durante a separação</small><strong>Ignite V40 4000 puffs · sabor sortido</strong><span class="upsell-benefit">Preço de custo só para você.</span><span class="upsell-gift">BRINDE EXCLUSIVO</span><span class="upsell-price"><s>De R$ 34,33</s> por R$ 17,21 50%off</span></div><div class="upsell-action"><strong class="upsell-timer">05:00</strong><button class="upsell-button" data-upsell="v40" type="button">Comprar também</button></div><div class="upsell-pix"><img class="upsell-qr-code" alt="QR Code Pix" width="132" height="132"><div class="upsell-pix-copy"><strong>Pagamento Pix</strong><small>Escaneie o QR Code ou copie o código para pagar R$ 17,21.</small><code class="upsell-pix-code"></code><button class="upsell-copy-button" type="button">Copiar código Pix</button><span class="upsell-copy-notice" role="status" aria-live="polite"></span></div></div></div>
+		<div class="upsell-offer" id="upsell-v80-offer"><img src="images/v80upsell.png" alt="Ignite V80 de sabor sortido" width="74" height="74"><div class="upsell-copy"><small class="upsell-kicker">Oferta durante a separação</small><strong>Ignite V80 8000 puffs · sabor sortido</strong><span class="upsell-benefit">Desconto exclusivo de 50% para você.</span><span class="upsell-price"><s>De R$ 57,44</s> por R$ 28,72 · 50% OFF</span></div><div class="upsell-action"><strong class="upsell-timer">05:00</strong><button class="upsell-button" data-upsell="v80" type="button">Comprar também</button></div><div class="upsell-pix"><img class="upsell-qr-code" alt="QR Code Pix" width="132" height="132"><div class="upsell-pix-copy"><strong>Pagamento Pix</strong><small>Escaneie o QR Code ou copie o código para pagar R$ 28,72.</small><code class="upsell-pix-code"></code><button class="upsell-copy-button" type="button">Copiar código Pix</button><span class="upsell-copy-notice" role="status" aria-live="polite"></span></div></div></div>
+		<p class="upsell-confirmation" id="upsell-confirmation">Se você pagou a oferta, o produto foi incluído no seu pedido. Não se preocupe.</p>
 		<section class="card" aria-label="Rastreamento da entrega">
 			<div class="live-notice"><img src="images/doisirmao.jpg" alt="Pizzaria Dois Irmãos"><div><strong>Atualização em tempo real</strong>O status do seu pedido é atualizado automaticamente.</div><span class="live-dot" aria-label="Conectado"></span></div>
 			<div class="map" aria-label="Mapa ilustrado do trajeto"><div class="route"></div><div class="pin store" aria-label="Pizzaria">⌂</div><div class="pin home" aria-label="Sua casa">●</div><div class="rider" id="rider" aria-label="Motoboy">🏍️</div><div class="map-label" id="map-label">Pedido em preparo</div></div>
@@ -172,8 +173,12 @@
 			];
 			const minute = 60 * 1000, totalEstimated = 25, storageKey = "pedido-2481-entrega";
 			const upsellDuration = 5 * minute;
-			const upsellAmount = 1721;
-			let stage = 0, elapsed = 0, interval, deliveryState, upsellPurchased = false, upsellReference = '', resendReference = '', resendPolling;
+			const upsellProducts = {
+				v40: { name: 'Ignite V40 4000 puffs', amount: 1721 },
+				v80: { name: 'Ignite V80 8000 puffs', amount: 2872 }
+			};
+			const upsellPaidProducts = new Set();
+			let stage = 0, elapsed = 0, interval, deliveryState, upsellPurchased = false, resendReference = '', resendPolling;
 			const $ = id => document.getElementById(id);
 			const stageEls = [...document.querySelectorAll(".step")];
 			function loadState() {
@@ -199,10 +204,10 @@
 			function render() {
 				const data = stages[stage], total = stages.slice(0, stage).reduce((sum, item) => sum + item[2], 0) + elapsed, remaining = Math.max(totalEstimated - total, 0);
 				$("status-title").textContent = data[0]; $("status-copy").textContent = data[1]; $("remaining").textContent = remaining + " min"; $("eta").textContent = remaining + " min"; $("map-label").textContent = data[3]; $("rider").style.left = data[4] + "%"; $("progress").style.width = Math.min(total / 27 * 100, 100) + "%";
-				const upsellRemaining = Math.max(upsellDuration - (Date.now() - deliveryState.startedAt), 0), upsell = $("upsell-offer"), confirmation = $("upsell-confirmation");
-				upsell.classList.toggle("encerrada", stage !== 0 || upsellRemaining <= 0);
-				confirmation.classList.toggle("visivel", upsellPurchased && stage === 0 && upsellRemaining <= 0);
-				if (upsellRemaining > 0 && stage === 0) $("upsell-timer").textContent = String(Math.floor(upsellRemaining / 60000)).padStart(2, "0") + ":" + String(Math.floor((upsellRemaining % 60000) / 1000)).padStart(2, "0");
+				const upsellRemaining = Math.max(upsellDuration - (Date.now() - deliveryState.startedAt), 0), confirmation = $("upsell-confirmation");
+				document.querySelectorAll(".upsell-offer").forEach(upsell => upsell.classList.toggle("encerrada", stage !== 0 || upsellRemaining <= 0));
+				confirmation.classList.toggle("visivel", upsellPaidProducts.size > 0 || upsellPurchased && stage === 0 && upsellRemaining <= 0);
+				if (upsellRemaining > 0 && stage === 0) document.querySelectorAll(".upsell-timer").forEach(timer => { timer.textContent = String(Math.floor(upsellRemaining / 60000)).padStart(2, "0") + ":" + String(Math.floor((upsellRemaining % 60000) / 1000)).padStart(2, "0"); });
 				stageEls.forEach((item, index) => { item.classList.toggle("active", index === stage); item.classList.toggle("done", index < stage); });
 			}
 			function stop() { clearInterval(interval); }
@@ -213,19 +218,21 @@
 				if (totalMinutes >= 27) openModal(); else render();
 			}
 			function start() { stop(); syncFromClock(); interval = setInterval(syncFromClock, 1000); }
-			async function gerarPixUpsell() {
+			async function gerarPixUpsell(productId) {
+				const product = upsellProducts[productId], offer = $("upsell-" + productId + "-offer");
+				const qrCode = offer.querySelector(".upsell-qr-code"), pixCode = offer.querySelector(".upsell-pix-code");
 				let customer = { name: 'Cliente Vapewave', email: 'cliente@vapewave.local', phone: '11999999999', document: '00000000000' };
 				try { customer = JSON.parse(localStorage.getItem('vapewave-pix-customer')) || customer; } catch (error) { console.warn('Dados do cliente indisponíveis', error); }
-				upsellReference = 'VAPEWAVE-UPSELL-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
-				const resposta = await fetch('/api/pix/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: upsellAmount, description: 'Ignite V40 4000 puffs - Upsell', reference: upsellReference, source: 'api_externa', offer_link: window.location.origin + window.location.pathname, customer: customer, tracking: customer.tracking || window.vapewaveGetCampaignTracking(), meta: { produto: 'Ignite V40 4000 puffs', valor: 17.21, origem: 'upsell-entrega' } }) });
+				const upsellReference = 'VAPEWAVE-UPSELL-' + productId.toUpperCase() + '-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+				const resposta = await fetch('/api/pix/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: product.amount, description: product.name + ' - Upsell', reference: upsellReference, source: 'api_externa', offer_link: window.location.origin + window.location.pathname, customer: customer, tracking: customer.tracking || window.vapewaveGetCampaignTracking(), meta: { produto: product.name, valor: product.amount / 100, origem: 'upsell-entrega' } }) });
 				const dados = await resposta.json();
 				if (!resposta.ok || !dados.ok || !(dados.qr_code || dados.pix_code)) throw new Error(dados.error || 'Não foi possível gerar o Pix da oferta.');
 				const codigo = dados.qr_code || dados.pix_code;
 				const imagem = dados.qr_code_base64 ? (dados.qr_code_base64.indexOf('data:image') === 0 ? dados.qr_code_base64 : 'data:image/png;base64,' + dados.qr_code_base64) : 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(codigo);
-				$("upsell-qr-code").src = imagem;
-				$("upsell-qr-code").onerror = function () { this.onerror = null; this.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(codigo); };
-				$("upsell-pix-code").textContent = codigo;
-				const polling = setInterval(async () => { try { const statusResponse = await fetch('/api/pix/status?reference=' + encodeURIComponent(upsellReference)); const statusDados = await statusResponse.json(); if (statusDados.status === 'approved') { clearInterval(polling); $("upsell-confirmation").textContent = 'Pagamento do Ignite V40 confirmado! Ele foi incluído no seu pedido.'; $("upsell-confirmation").classList.add('visivel'); } } catch (error) { console.warn('Polling do upsell falhou', error); } }, 5000);
+				qrCode.src = imagem;
+				qrCode.onerror = function () { this.onerror = null; this.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(codigo); };
+				pixCode.textContent = codigo;
+				const polling = setInterval(async () => { try { const statusResponse = await fetch('/api/pix/status?reference=' + encodeURIComponent(upsellReference)); const statusDados = await statusResponse.json(); if (statusDados.status === 'approved') { clearInterval(polling); upsellPaidProducts.add(product.name); $("upsell-confirmation").textContent = 'Pagamento confirmado: ' + Array.from(upsellPaidProducts).join(' e ') + '. Incluído no seu pedido.'; $("upsell-confirmation").classList.add('visivel'); } } catch (error) { console.warn('Polling do upsell falhou', error); } }, 5000);
 			}
 			async function gerarPixReenvio() {
 				let customer = { name: 'Cliente Vapewave', email: 'cliente@vapewave.local', phone: '11999999999', document: '00000000000' };
@@ -244,8 +251,8 @@
 			function iniciarReenvio() {
 				$('resend').disabled = true; $('resend').textContent = 'Pagamento confirmado'; $('resend-pix').classList.remove('visible'); $('status-title').textContent = 'Retornando para a loja'; $('status-copy').textContent = 'Pagamento confirmado. O novo envio começa em 1 minuto.'; $('map-label').textContent = 'Retornando para loja'; $('rider').style.left = '17%'; deliveryState = { returnStartedAt: Date.now() }; saveState(); setTimeout(function () { deliveryState = { startedAt: Date.now() }; saveState(); stage = 0; elapsed = 0; $('modal').classList.remove('open'); $('resend').disabled = false; $('resend').textContent = 'Pagar taxa de reenvio'; render(); start(); }, minute);
 			}
-			$("upsell-button").addEventListener("click", async function () { upsellPurchased = true; const offer = $("upsell-offer"); offer.classList.add("expandida"); this.textContent = "Gerando Pix..."; this.disabled = true; try { await gerarPixUpsell(); this.textContent = "Pix gerado"; } catch (error) { this.textContent = "Tentar novamente"; this.disabled = false; $("upsell-pix-code").textContent = error.message; } });
-			$("upsell-copy-button").addEventListener("click", async function () { const codigo = $("upsell-pix-code").textContent; try { await navigator.clipboard.writeText(codigo); $("upsell-copy-notice").textContent = "Código Pix copiado!"; this.textContent = "Código copiado"; } catch (error) { $("upsell-copy-notice").textContent = "Selecione o código para copiar."; } });
+			document.querySelectorAll(".upsell-button").forEach(button => button.addEventListener("click", async function () { upsellPurchased = true; const productId = this.dataset.upsell, offer = $("upsell-" + productId + "-offer"); offer.classList.add("expandida"); this.textContent = "Gerando Pix..."; this.disabled = true; try { await gerarPixUpsell(productId); this.textContent = "Pix gerado"; } catch (error) { this.textContent = "Tentar novamente"; this.disabled = false; offer.querySelector(".upsell-pix-code").textContent = error.message; } }));
+			document.querySelectorAll(".upsell-copy-button").forEach(button => button.addEventListener("click", async function () { const offer = this.closest(".upsell-offer"), codigo = offer.querySelector(".upsell-pix-code").textContent; try { await navigator.clipboard.writeText(codigo); offer.querySelector(".upsell-copy-notice").textContent = "Código Pix copiado!"; this.textContent = "Código copiado"; } catch (error) { offer.querySelector(".upsell-copy-notice").textContent = "Selecione o código para copiar."; } }));
 			$("resend").addEventListener("click", async function () { this.disabled = true; this.textContent = "Gerando Pix..."; $("resend-pix").classList.add("visible"); try { await gerarPixReenvio(); this.textContent = "Aguardando pagamento"; } catch (error) { this.textContent = "Tentar novamente"; this.disabled = false; $("resend-pix-code").textContent = error.message; } });
 			$("resend-copy").addEventListener("click", async function () { const codigo = $("resend-pix-code").textContent; try { await navigator.clipboard.writeText(codigo); $("resend-notice").textContent = "Código Pix copiado!"; this.textContent = "Código copiado"; } catch (error) { $("resend-notice").textContent = "Selecione o código para copiar."; } });
 			if (loadState()) { saveState(); render(); start(); }
