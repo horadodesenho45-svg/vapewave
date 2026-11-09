@@ -1,4 +1,3 @@
-const crypto = require('crypto');
 const { savePurchaseOrder, removePendingPurchaseOrder } = require('../_lib/purchase-store');
 
 module.exports = async function handler(req, res) {
@@ -31,8 +30,6 @@ module.exports = async function handler(req, res) {
     const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
     const amount = Number(body.amount ?? 0);
     const description = String(body.description || 'Pedido Vapewave');
-    const productName = String((body.meta && body.meta.produto) || description).trim().toLowerCase();
-    const productHash = crypto.createHash('sha256').update(productName).digest('hex');
     const reference = String(body.reference || `VAPEWAVE-${Date.now()}`);
     purchaseReference = reference;
     const customer = body.customer || {
@@ -53,7 +50,7 @@ module.exports = async function handler(req, res) {
     const payload = {
       amount,
       description,
-      productHash,
+      productHash: 'prod_bb8e0ec1c581d0ca',
       reference,
       source: body.source || 'api_externa',
       offer_link: body.offer_link || 'https://www.vapewave.com.br',
