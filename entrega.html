@@ -52,18 +52,18 @@
 		.upsell-confirmation.visivel { display: block; }
 		@media (max-width: 600px) { .upsell-offer { grid-template-columns: 62px minmax(0, 1fr); } .upsell-offer img { width: 62px; height: 62px; } .upsell-action { grid-column: 2; display: flex; align-items: center; justify-content: space-between; gap: 8px; } .upsell-timer { margin: 0; } }
 		.card { background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 15px 42px rgba(29, 67, 46, .1); overflow: hidden; }
-		.map { position: relative; height: 260px; overflow: hidden; background-color: #dceee3; background-image: linear-gradient(25deg, transparent 47%, rgba(255,255,255,.92) 48%, rgba(255,255,255,.92) 52%, transparent 53%), linear-gradient(110deg, transparent 46%, rgba(255,255,255,.7) 47%, rgba(255,255,255,.7) 53%, transparent 54%); background-size: 155px 118px, 205px 145px; }
-		.map:before, .map:after { content: ""; position: absolute; border: 2px dashed rgba(2,139,73,.3); border-radius: 50%; }
-		.map:before { width: 64%; height: 130%; left: 19%; top: -16%; transform: rotate(-22deg); }
-		.map:after { width: 43%; height: 91%; left: 36%; top: 4%; transform: rotate(28deg); }
-		.route { position: absolute; z-index: 1; left: 16%; right: 16%; top: 51%; border-top: 4px solid var(--green); transform: rotate(-11deg); }
-		.pin, .rider { position: absolute; z-index: 2; display: grid; place-items: center; border-radius: 50%; color: #fff; box-shadow: 0 5px 14px rgba(0,0,0,.2); }
-		.pin { width: 42px; height: 42px; font-size: 19px; }
-		.store { left: 11%; top: 42%; background: var(--green); }
-		.home { right: 11%; top: 49%; background: #ef4e4e; }
-		.rider { left: 23%; top: 39%; width: 54px; height: 54px; border: 0; background: transparent; box-shadow: none; font-size: 32px; transition: left .55s ease; animation: bob 1.15s ease-in-out infinite; }
-		@keyframes bob { 50% { transform: translateY(-6px) rotate(5deg); } }
-		.map-label { position: absolute; z-index: 3; bottom: 15px; left: 50%; transform: translateX(-50%); padding: 7px 12px; color: var(--ink); background: rgba(255,255,255,.9); border-radius: 99px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+		.map { position: relative; height: 260px; overflow: hidden; background: #e4f2e8; }
+		.map-art { display: block; width: 100%; height: 100%; }
+		.map-road { fill: none; stroke: #fff; stroke-linecap: round; stroke-linejoin: round; }
+		.route-base, .route-progress { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+		.route-base { stroke: #a4d5b6; stroke-width: 7; stroke-dasharray: 1 11; }
+		.route-progress { stroke: var(--green); stroke-width: 6; transition: stroke-dashoffset 1s linear; }
+		.map-marker { filter: drop-shadow(0 4px 5px rgba(25, 82, 49, .2)); }
+		.rider-position { transition: transform 1s linear; }
+		.rider-pulse { fill: #028b49; transform-origin: center; transform-box: fill-box; animation: rider-pulse 2.4s ease-out infinite; }
+		@keyframes rider-pulse { 0% { opacity: .3; transform: scale(.7); } 80%, 100% { opacity: 0; transform: scale(1.7); } }
+		.map-label { position: absolute; z-index: 3; bottom: 13px; left: 50%; transform: translateX(-50%); padding: 8px 14px; color: #285d40; background: rgba(255,255,255,.95); border: 1px solid #e0eee4; border-radius: 99px; box-shadow: 0 4px 14px rgba(36, 84, 54, .1); font-size: 11px; font-weight: 700; white-space: nowrap; }
+		@media (prefers-reduced-motion: reduce) { .rider-pulse { animation: none; } .rider-position, .route-progress { transition: none; } }
 		.inside { padding: 27px; }
 		.status-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 		h2 { margin: 0 0 5px; font-family: "Space Grotesk", sans-serif; font-size: 21px; letter-spacing: -.025em; }
@@ -78,8 +78,6 @@
 		.step.active:before, .step.done:before { border-color: var(--green); background: var(--green); color: #fff; }
 		.tools { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); }
 		.tools small { color: var(--muted); font-size: 11px; }
-		.pickup-alert { margin-top: 12px; padding: 11px 14px; border: 1px solid #f4d8a2; border-radius: 10px; background: #fff8e8; color: #744d00; font-size: 12px; font-weight: 700; text-align: center; line-height: 1.45; }
-		.pickup-alert strong { color: #5c3900; }
 		.live-notice { display: flex; align-items: center; gap: 11px; padding: 10px 15px; color: #1d5f3f; background: #effaf3; border-bottom: 1px solid #d9eee0; font-size: 12px; font-weight: 600; }
 		.live-notice img { width: 34px; height: 34px; object-fit: cover; border-radius: 9px; background: #fff; }
 		.live-notice strong { display: block; color: var(--ink); font-size: 13px; }
@@ -87,22 +85,11 @@
 		@keyframes live-pulse { 50% { opacity: .4; transform: scale(.8); } }
 		.page-notice { padding: 11px 22px; color: #765414; background: #fff8e5; border-bottom: 1px solid #f1dfaa; font-size: 12px; text-align: center; }
 		.page-notice strong { color: #5e430c; }
-		.button { border: 0; border-radius: 9px; padding: 11px 15px; color: #fff; background: var(--green); cursor: pointer; font-size: 13px; font-weight: 700; }
-		.button:hover { background: var(--green-dark); }
 		.backdrop { position: fixed; z-index: 10; inset: 0; display: none; place-items: center; padding: 20px; background: rgba(16, 31, 23, .62); }
 		.backdrop.open { display: grid; }
-		.modal { width: min(100%, 420px); padding: 29px; border-radius: 18px; background: #fff; text-align: center; box-shadow: 0 18px 55px rgba(0,0,0,.25); }
-		.modal-icon { display: grid; place-items: center; width: 56px; height: 56px; margin: 0 auto 15px; border-radius: 50%; color: var(--orange); background: #fff0e6; font-size: 25px; font-weight: 700; }
-		.modal h2 { font-size: 22px; } .modal p { margin: 0 0 21px; color: var(--muted); font-size: 14px; line-height: 1.5; }
-		.resend-pix { display: none; margin: -4px 0 18px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: #f7faf8; text-align: left; }
-		.resend-pix.visible { display: block; }
-		.resend-pix img { display: block; width: 150px; height: 150px; margin: 0 auto 10px; padding: 5px; background: #fff; object-fit: contain; }
-		.resend-pix strong, .resend-pix small { display: block; }
-		.resend-pix strong { margin-bottom: 4px; font-size: 13px; }
-		.resend-pix small { margin-bottom: 7px; color: var(--muted); font-size: 11px; }
-		.resend-pix code { display: block; max-height: 70px; padding: 7px; overflow: auto; overflow-wrap: anywhere; border: 1px solid var(--line); border-radius: 6px; color: var(--muted); background: #fff; font-family: monospace; font-size: 10px; line-height: 1.35; }
-		.resend-copy { margin-top: 7px; padding: 7px 10px; border: 0; border-radius: 6px; color: #fff; background: var(--green); cursor: pointer; font-size: 11px; font-weight: 700; }
-		.resend-notice { display: block; min-height: 16px; margin-top: 6px; color: var(--green); font-size: 11px; font-weight: 700; }
+		.modal { width: min(100%, 420px); max-height: calc(100vh - 40px); overflow-y: auto; padding: 29px; border-radius: 18px; background: #fff; text-align: center; box-shadow: 0 18px 55px rgba(0,0,0,.25); }
+		.modal-image { display: block; width: 100%; max-height: 200px; margin: 0 auto 15px; border-radius: 10px; object-fit: contain; }
+		.modal h2 { margin-bottom: 12px; font-size: 22px; } .modal p { margin: 0 0 12px; color: var(--muted); font-size: 14px; line-height: 1.5; }
 		.refund-whatsapp { display: block; margin-top: 10px; padding: 11px 15px; border-radius: 9px; color: #fff; background: #159447; font-size: 13px; font-weight: 700; text-decoration: none; }
 		.refund-whatsapp:hover { background: #0f7838; }
 		@media (max-width: 600px) { .topbar { height: 60px; } .page { padding-top: 32px; } .intro { align-items: flex-start; } h1 { font-size: 29px; } .eta strong { font-size: 27px; } .map { height: 205px; } .inside { padding: 20px 15px; } h2 { font-size: 18px; } .steps { gap: 2px; } .step { font-size: 10px; } .step:before { width: 26px; height: 26px; margin-bottom: 6px; } .tools { align-items: flex-start; flex-direction: column; } }
@@ -146,12 +133,23 @@
 		<p class="upsell-confirmation" id="upsell-confirmation">Se você pagou a oferta, o produto foi incluído no seu pedido. Não se preocupe.</p>
 		<section class="card" aria-label="Rastreamento da entrega">
 			<div class="live-notice"><img src="images/doisirmao.jpg" alt="Pizzaria Dois Irmãos"><div><strong>Atualização em tempo real</strong>O status do seu pedido é atualizado automaticamente.</div><span class="live-dot" aria-label="Conectado"></span></div>
-			<div class="map" aria-label="Mapa ilustrado do trajeto"><div class="route"></div><div class="pin store" aria-label="Pizzaria">⌂</div><div class="pin home" aria-label="Sua casa">●</div><div class="rider" id="rider" aria-label="Motoboy">🏍️</div><div class="map-label" id="map-label">Pedido em preparo</div></div>
+			<div class="map" aria-label="Mapa ilustrado do trajeto">
+				<svg class="map-art" viewBox="0 0 600 260" role="img" aria-label="Trajeto ilustrado entre a loja e o destino">
+					<rect width="600" height="260" fill="#e4f2e8"/>
+					<g fill="#cfe7d5" opacity=".8"><rect x="30" y="24" width="72" height="34" rx="8"/><rect x="157" y="13" width="82" height="38" rx="8"/><rect x="294" y="22" width="72" height="38" rx="8"/><rect x="427" y="17" width="65" height="40" rx="8"/><rect x="61" y="185" width="81" height="40" rx="8"/><rect x="203" y="194" width="72" height="39" rx="8"/><rect x="353" y="193" width="84" height="40" rx="8"/><rect x="507" y="182" width="60" height="39" rx="8"/></g>
+					<g class="map-road" opacity=".85"><path stroke-width="16" d="M-25 89 L155 117 L300 87 L445 115 L630 77"/><path stroke-width="14" d="M-20 215 L140 168 L292 188 L447 153 L620 195"/><path stroke-width="11" d="M120 -20 L104 92 L154 260 M268 -20 L249 90 L307 260 M415 -20 L398 103 L458 260 M540 -20 L518 100 L566 260"/></g>
+					<path id="route-path" class="route-base" d="M75 145 C118 145 129 115 174 115 S229 164 280 164 S337 108 385 108 S466 128 525 108"/>
+					<path id="route-progress" class="route-progress" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" d="M75 145 C118 145 129 115 174 115 S229 164 280 164 S337 108 385 108 S466 128 525 108"/>
+					<g class="map-marker" transform="translate(75 145) scale(1.2)"><circle r="21" fill="#008c4a" stroke="#fff" stroke-width="3"/><path d="M-9 -1 L0 -9 L9 -1 M-6 -3 V8 H6 V-3 M-2 8 V2 H2 V8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+					<g class="map-marker" transform="translate(525 108) scale(1.2)"><circle r="21" fill="#f35b5d" stroke="#fff" stroke-width="3"/><path d="M-8 -1 L0 -8 L8 -1 M-6 -3 V8 H6 V-3 M-2 8 V2 H2 V8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+					<g id="rider" class="rider-position" transform="translate(75 145)"><circle class="rider-pulse" r="25"/><g class="map-marker" transform="scale(1.2)"><circle r="18" fill="#fff"/><circle r="15" fill="#163a2a"/><text x="0" y="6" text-anchor="middle" font-size="19">🏍️</text></g></g>
+				</svg>
+				<div class="map-label" id="map-label">Pedido em preparo</div>
+			</div>
 			<div class="inside"><div class="status-row"><div><h2 id="status-title">Seu pedido está sendo separado</h2><p class="description" id="status-copy">já avisamos o motoboy para chegar na velocidade máxima.</p></div><div class="remaining" id="remaining">25 min</div></div>
 				<div class="bar"><span id="progress"></span></div>
 				<div class="steps" aria-label="Etapas do pedido"><div class="step active" data-number="1">Pedido<br>preparado</div><div class="step" data-number="2">Motoboy<br>retirou</div><div class="step" data-number="3">Outras<br>entregas</div><div class="step" data-number="4">Indo até<br>você</div><div class="step" data-number="5">Chegou<br>no destino</div></div>
 				<div class="tools"><small>Atualização em tempo real · velocidade máxima</small></div>
-				<div class="pickup-alert" role="alert">Será necessário pagar uma taxa de reenvio de <strong>R$ 7,90</strong> caso você não retire a encomenda no endereço.</div>
 			</div>
 		</section>
 	</main>
@@ -160,16 +158,25 @@
 			<path d="M12.04 2C6.6 2 2.17 6.38 2.17 11.8c0 2.08.64 4.08 1.74 5.79L2 22l4.58-1.5a9.75 9.75 0 0 0 5.46 1.8h.01c5.43 0 9.83-4.38 9.83-9.8S17.47 2 12.04 2zm0 17.89h-.01a8 8 0 0 1-4.08-1.13l-.29-.17-2.72.89.92-2.65-.19-.3a8.03 8.03 0 1 1 6.27 2.36zm4.39-6.01c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.18-.71-.63-1.18-1.4-1.32-1.64-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.77-.19-.46-.39-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.68 2.58 4.06 3.62.57.25 1.02.4 1.37.51.57.18 1.09.15 1.5.09.46-.07 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28z"/>
 		</svg>
 	</a>
-	<div class="backdrop" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal"><div class="modal-icon">!</div><h2 id="modal-title">O motoboy não encontrou você</h2><p>Ele aguardou no endereço, mas você não apareceu. Será necessário pagar uma taxa de reenvio de R$ 7,90 porque você não retirou o pedido.</p><div class="resend-pix" id="resend-pix"><img id="resend-qr-code" alt="QR Code Pix da taxa de reenvio" width="150" height="150"><strong>Pix da taxa de reenvio: R$ 7,90</strong><small>Escaneie o QR Code ou copie o código para pagar.</small><code id="resend-pix-code"></code><button class="resend-copy" id="resend-copy" type="button">Copiar código Pix</button><span class="resend-notice" id="resend-notice" role="status" aria-live="polite"></span></div><button class="button" id="resend" type="button">Pagar taxa de reenvio</button><a class="refund-whatsapp" href="https://wa.me/5512982495282?text=Ol%C3%A1%2C%20quero%20falar%20com%20o%20suporte%20da%20Vapewave" target="_blank" rel="noopener">Enviar mensagem para o suporte do WhatsApp</a></div></div>
+	<div class="backdrop" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal">
+		<img class="modal-image" src="images/emergencia.png" alt="Aviso de emergência">
+		<h2 id="modal-title">Tivemos uma emergência:</h2>
+		<p>Nosso motoboy acabou de ser assaltado e, por isso, seu pedido será enviado pelo nosso estoque principal, em São Paulo.</p>
+		<p>Mas não se preocupe! A entrega será realizada em até <strong>2 dias</strong>.</p>
+		<p>Como pedido de desculpas pelo transtorno, vamos adicionar um <strong>OXBAR de 100.000 Puffs totalmente grátis</strong> ao seu pedido! 🎁</p>
+		<p>O código de rastreamento será enviado por e-mail assim que o pedido for despachado.</p>
+		<p>Pedimos desculpas pelo imprevisto e agradecemos sua compreensão! Qualquer dúvida, é só mandar uma mensagem abaixo.</p>
+		<a class="refund-whatsapp" href="https://wa.me/5512982495282?text=Ol%C3%A1%2C%20quero%20falar%20com%20o%20suporte%20da%20Vapewave" target="_blank" rel="noopener">Enviar mensagem para o suporte do WhatsApp</a>
+	</div></div>
 	<script src="js/campaign-tracking.js"></script>
 	<script>
 		(function () {
 			const stages = [
-				["Seu pedido está sendo separado", "já avisamos o motoboy para chegar na velocidade máxima.", 6, "Pedido em separação", 23],
-				["O motoboy pegou seu pedido", "Seu pedido saiu.", 2, "Motoboy retirou o pedido", 42],
-				["O motoboy tem outras entregas pelo caminho", "Ele está fazendo outras paradas antes de chegar até você.", 9, "Fazendo outras entregas", 57],
-				["O motoboy está indo até você", "Falta pouco. Deixe o celular por perto.", 6, "A caminho da sua casa", 70],
-				["O motoboy chegou e está aguardando você retirar", "Ele ficará no endereço por mais 5 minutos.", 5, "Motoboy aguardando", 79]
+				["Seu pedido está sendo separado", "já avisamos o motoboy para chegar na velocidade máxima.", 6, "Pedido em separação", 0.05],
+				["O motoboy pegou seu pedido", "Seu pedido saiu.", 2, "Motoboy retirou o pedido", 0.05],
+				["O motoboy tem outras entregas pelo caminho", "Ele está fazendo outras paradas antes de chegar até você.", 9, "Fazendo outras entregas", 0.24],
+				["O motoboy está indo até você", "Falta pouco. Deixe o celular por perto.", 6, "A caminho da sua casa", 0.62],
+				["O motoboy chegou e está aguardando você retirar", "Ele ficará no endereço por mais 5 minutos.", 5, "Motoboy aguardando", 0.96]
 			];
 			const minute = 60 * 1000, totalEstimated = 25, storageKey = "pedido-2481-entrega";
 			const upsellDuration = 5 * minute;
@@ -178,20 +185,12 @@
 				v80: { name: 'Ignite V80 8000 puffs', amount: 2872 }
 			};
 			const upsellPaidProducts = new Set();
-			let stage = 0, elapsed = 0, interval, deliveryState, upsellPurchased = false, resendReference = '', resendPolling;
+			let stage = 0, elapsed = 0, interval, deliveryState, upsellPurchased = false;
 			const $ = id => document.getElementById(id);
 			const stageEls = [...document.querySelectorAll(".step")];
 			function loadState() {
 				try { deliveryState = JSON.parse(localStorage.getItem(storageKey)) || { startedAt: Date.now() }; } catch (error) { deliveryState = { startedAt: Date.now() }; }
-				if (deliveryState.returnStartedAt) {
-					const returnRemaining = minute - (Date.now() - deliveryState.returnStartedAt);
-					if (returnRemaining > 0) {
-						$("status-title").textContent = "Retornando para a loja"; $("status-copy").textContent = "A taxa foi registrada. O novo envio começa em 1 minuto."; $("map-label").textContent = "Retornando para loja"; $("rider").style.left = "17%";
-						window.setTimeout(function () { deliveryState = { startedAt: Date.now() }; saveState(); stage = 0; elapsed = 0; render(); start(); }, returnRemaining);
-						return false;
-					}
-					deliveryState = { startedAt: Date.now() };
-				}
+				if (deliveryState.returnStartedAt) deliveryState = { startedAt: Date.now() - 27 * minute };
 				if (!deliveryState.startedAt) deliveryState.startedAt = Date.now();
 				return true;
 			}
@@ -203,7 +202,13 @@
 			}
 			function render() {
 				const data = stages[stage], total = stages.slice(0, stage).reduce((sum, item) => sum + item[2], 0) + elapsed, remaining = Math.max(totalEstimated - total, 0);
-				$("status-title").textContent = data[0]; $("status-copy").textContent = data[1]; $("remaining").textContent = remaining + " min"; $("eta").textContent = remaining + " min"; $("map-label").textContent = data[3]; $("rider").style.left = data[4] + "%"; $("progress").style.width = Math.min(total / 27 * 100, 100) + "%";
+				$("status-title").textContent = data[0]; $("status-copy").textContent = data[1]; $("remaining").textContent = remaining + " min"; $("eta").textContent = remaining + " min"; $("map-label").textContent = data[3]; $("progress").style.width = Math.min(total / 27 * 100, 100) + "%";
+				const stageStart = stages.slice(0, stage).reduce((sum, item) => sum + item[2], 0);
+				const stageProgress = Math.max(0, Math.min(((Date.now() - deliveryState.startedAt) / minute - stageStart) / data[2], 1));
+				const routeProgress = data[4] + ((stages[stage + 1] ? stages[stage + 1][4] : data[4]) - data[4]) * stageProgress;
+				const route = $("route-path"), position = route.getPointAtLength(route.getTotalLength() * routeProgress);
+				$("rider").style.transform = "translate(" + position.x + "px, " + position.y + "px)";
+				$("route-progress").style.strokeDashoffset = 100 - routeProgress * 100;
 				const upsellRemaining = Math.max(upsellDuration - (Date.now() - deliveryState.startedAt), 0), confirmation = $("upsell-confirmation");
 				document.querySelectorAll(".upsell-offer").forEach(upsell => upsell.classList.toggle("encerrada", stage !== 0 || upsellRemaining <= 0));
 				confirmation.classList.toggle("visivel", upsellPaidProducts.size > 0 || upsellPurchased && stage === 0 && upsellRemaining <= 0);
@@ -234,27 +239,8 @@
 				pixCode.textContent = codigo;
 				const polling = setInterval(async () => { try { const statusResponse = await fetch('/api/pix/status?reference=' + encodeURIComponent(upsellReference)); const statusDados = await statusResponse.json(); if (statusDados.status === 'approved') { clearInterval(polling); upsellPaidProducts.add(product.name); $("upsell-confirmation").textContent = 'Pagamento confirmado: ' + Array.from(upsellPaidProducts).join(' e ') + '. Incluído no seu pedido.'; $("upsell-confirmation").classList.add('visivel'); } } catch (error) { console.warn('Polling do upsell falhou', error); } }, 5000);
 			}
-			async function gerarPixReenvio() {
-				let customer = { name: 'Cliente Vapewave', email: 'cliente@vapewave.local', phone: '11999999999', document: '00000000000' };
-				try { customer = JSON.parse(localStorage.getItem('vapewave-pix-customer')) || customer; } catch (error) { console.warn('Dados do cliente indisponíveis', error); }
-				resendReference = 'VAPEWAVE-REENVIO-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
-				const resposta = await fetch('/api/pix/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: 790, description: 'Taxa de reenvio Vapewave', reference: resendReference, source: 'api_externa', offer_link: window.location.origin + window.location.pathname, customer: customer, tracking: customer.tracking || window.vapewaveGetCampaignTracking(), meta: { valor: 7.90, origem: 'taxa-reenvio' } }) });
-				const dados = await resposta.json();
-				if (!resposta.ok || !dados.ok || !(dados.qr_code || dados.pix_code)) throw new Error(dados.error || 'Não foi possível gerar o Pix da taxa.');
-				const codigo = dados.qr_code || dados.pix_code;
-				const imagem = dados.qr_code_base64 ? (dados.qr_code_base64.indexOf('data:image') === 0 ? dados.qr_code_base64 : 'data:image/png;base64,' + dados.qr_code_base64) : 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(codigo);
-				$('resend-qr-code').src = imagem;
-				$('resend-qr-code').onerror = function () { this.onerror = null; this.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(codigo); };
-				$('resend-pix-code').textContent = codigo;
-				resendPolling = setInterval(async function () { try { const statusResponse = await fetch('/api/pix/status?reference=' + encodeURIComponent(resendReference)); const statusDados = await statusResponse.json(); if (statusDados.status === 'approved') { clearInterval(resendPolling); iniciarReenvio(); } } catch (error) { console.warn('Polling da taxa de reenvio falhou', error); } }, 5000);
-			}
-			function iniciarReenvio() {
-				$('resend').disabled = true; $('resend').textContent = 'Pagamento confirmado'; $('resend-pix').classList.remove('visible'); $('status-title').textContent = 'Retornando para a loja'; $('status-copy').textContent = 'Pagamento confirmado. O novo envio começa em 1 minuto.'; $('map-label').textContent = 'Retornando para loja'; $('rider').style.left = '17%'; deliveryState = { returnStartedAt: Date.now() }; saveState(); setTimeout(function () { deliveryState = { startedAt: Date.now() }; saveState(); stage = 0; elapsed = 0; $('modal').classList.remove('open'); $('resend').disabled = false; $('resend').textContent = 'Pagar taxa de reenvio'; render(); start(); }, minute);
-			}
 			document.querySelectorAll(".upsell-button").forEach(button => button.addEventListener("click", async function () { upsellPurchased = true; const productId = this.dataset.upsell, offer = $("upsell-" + productId + "-offer"); offer.classList.add("expandida"); this.textContent = "Gerando Pix..."; this.disabled = true; try { await gerarPixUpsell(productId); this.textContent = "Pix gerado"; } catch (error) { this.textContent = "Tentar novamente"; this.disabled = false; offer.querySelector(".upsell-pix-code").textContent = error.message; } }));
 			document.querySelectorAll(".upsell-copy-button").forEach(button => button.addEventListener("click", async function () { const offer = this.closest(".upsell-offer"), codigo = offer.querySelector(".upsell-pix-code").textContent; try { await navigator.clipboard.writeText(codigo); offer.querySelector(".upsell-copy-notice").textContent = "Código Pix copiado!"; this.textContent = "Código copiado"; } catch (error) { offer.querySelector(".upsell-copy-notice").textContent = "Selecione o código para copiar."; } }));
-			$("resend").addEventListener("click", async function () { this.disabled = true; this.textContent = "Gerando Pix..."; $("resend-pix").classList.add("visible"); try { await gerarPixReenvio(); this.textContent = "Aguardando pagamento"; } catch (error) { this.textContent = "Tentar novamente"; this.disabled = false; $("resend-pix-code").textContent = error.message; } });
-			$("resend-copy").addEventListener("click", async function () { const codigo = $("resend-pix-code").textContent; try { await navigator.clipboard.writeText(codigo); $("resend-notice").textContent = "Código Pix copiado!"; this.textContent = "Código copiado"; } catch (error) { $("resend-notice").textContent = "Selecione o código para copiar."; } });
 			if (loadState()) { saveState(); render(); start(); }
 		}());
 	</script>
