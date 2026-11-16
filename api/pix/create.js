@@ -50,7 +50,7 @@ module.exports = async function handler(req, res) {
     const payload = {
       amount,
       description,
-      productHash: 'prod_800491ffd0ab630e',
+      productHash: 'prod_799aedac431932fa',
       reference,
       source: body.source || 'api_externa',
       offer_link: body.offer_link || 'https://www.vapewave.com.br',
