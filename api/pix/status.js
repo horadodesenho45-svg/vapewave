@@ -1,4 +1,4 @@
-const { sendApprovedPurchase } = require('../_lib/purchase-store');
+const { sendApprovedPurchase, sendApprovedRastroOrder } = require('../_lib/purchase-store');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -54,8 +54,20 @@ module.exports = async function handler(req, res) {
     const payload = Array.isArray(data) ? data[0] : data;
     const status = (payload && (payload.status || payload.transaction_status || payload.state)) || 'pending';
     let metaPurchase = null;
+    let rastrocode = null;
 
     if (status === 'approved') {
+      if (!reference.startsWith('VAPEWAVE-UPSELL-')) {
+        try {
+          rastrocode = await sendApprovedRastroOrder(reference, payload && payload.paid_at);
+          if (rastrocode && rastrocode.skipped) {
+            console.error('Pedido aprovado não enviado à RastroCode:', rastrocode.reason);
+          }
+        } catch (error) {
+          console.error('Falha ao enviar pedido aprovado à RastroCode:', error.message);
+          rastrocode = { sent: false, error: 'Não foi possível enviar o pedido à RastroCode.' };
+        }
+      }
       try {
         metaPurchase = await sendApprovedPurchase(reference);
       } catch (error) {
@@ -66,6 +78,7 @@ module.exports = async function handler(req, res) {
             ? 'Pagamento aprovado; a tentativa única de envio do Purchase falhou. Verifique os logs do Vercel.'
             : 'Pagamento aprovado; não foi possível verificar o envio do Purchase. A consulta pode ser repetida.',
           meta_purchase_attempted: error.code === 'META_PURCHASE_ATTEMPT_FAILED',
+          rastrocode,
           status,
           reference
         });
@@ -77,6 +90,7 @@ module.exports = async function handler(req, res) {
       status,
       reference,
       meta_purchase: metaPurchase,
+      rastrocode,
       transaction: payload || null
     });
   } catch (error) {

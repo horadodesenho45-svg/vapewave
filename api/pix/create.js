@@ -74,11 +74,17 @@ module.exports = async function handler(req, res) {
           customer,
           tracking: payload.tracking,
           eventSourceUrl: payload.offer_link,
+          address: body.delivery_address,
+          quantity: body.meta && body.meta.quantidade,
+          flavors: body.meta && body.meta.sabores,
           request: req
         });
       } catch (error) {
         if (error.code === 'PURCHASE_REFERENCE_EXISTS') {
           return res.status(409).json({ ok: false, error: error.message });
+        }
+        if (error.code === 'INVALID_RASTRO_ORDER') {
+          return res.status(400).json({ ok: false, error: error.message });
         }
         return res.status(503).json({
           ok: false,

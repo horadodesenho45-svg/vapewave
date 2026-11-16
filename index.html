@@ -1198,6 +1198,7 @@
 					<label for="modalTelefone">Seu telefone <b>*</b></label><input id="modalTelefone" type="tel" inputmode="numeric" placeholder="(99) 99999-9999" required>
 					<label for="modalDocumento">CPF <b>*</b></label><input id="modalDocumento" type="text" inputmode="numeric" placeholder="000.000.000-00" required>
 					<label for="modalEmail">E-mail <b>*</b></label><input id="modalEmail" type="email" placeholder="seuemail@email.com" required>
+					<label for="modalCep">CEP <b>*</b></label><input id="modalCep" type="text" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" placeholder="Somente números" title="Informe os 8 números do CEP" required>
 					<label for="modalRua">Rua <b>*</b></label><input id="modalRua" type="text" placeholder="Nome da rua" required>
 					<div class="modalCompra-linha"><div><label for="modalNumero">Número <b>*</b></label><input id="modalNumero" type="text" placeholder="123" required></div><div><label for="modalBairro">Bairro <b>*</b></label><input id="modalBairro" type="text" placeholder="Seu bairro" required></div></div>
 					<label for="modalComplemento">Complemento</label><input id="modalComplemento" type="text" placeholder="Apto, bloco, casa... (opcional)">
@@ -1559,6 +1560,9 @@
 				if (event.target && event.target.id === 'modalDocumento') {
 					formatarDocumento(event.target);
 				}
+				if (event.target && event.target.id === 'modalCep') {
+					event.target.value = event.target.value.replace(/\D/g, '').slice(0, 8);
+				}
 			});
 			document.addEventListener('click', function (event) { if (event.target.closest('#resetarSabores')) { document.querySelectorAll('.modalCompra-sabor').forEach(sabor => sabor.dataset.quantidade = 0); atualizarVisualSabores(); atualizarTotal(); return; } const sabor = event.target.closest('.modalCompra-sabor'); if (sabor) { const quantidade = Number(document.getElementById('modalQuantidade').textContent); const totalSelecionado = contarSaboresSelecionados(); if (quantidade === 1) { document.querySelectorAll('.modalCompra-sabor').forEach(item => item.dataset.quantidade = 0); sabor.dataset.quantidade = 1; } else {
 					const atual = Number(sabor.dataset.quantidade || 0);
@@ -1572,6 +1576,21 @@
 			} if (event.target.closest('#modalQuantidadeMais, #modalQuantidadeMenos')) { const output = document.getElementById('modalQuantidade'); const atual = Number(output.textContent); const quantidade = event.target.closest('#modalQuantidadeMais') ? atual + 1 : Math.max(1, atual - 1); output.textContent = quantidade; atualizarSelecaoSabores(quantidade); atualizarTotal(); atualizarMensagemSabores(); } const produtoLink = event.target.closest('a.disponivel'); if (produtoLink || event.target.closest('#btFinalizar, .btn-comprar, .comprar, .adicionarProduto')) { event.preventDefault(); abrirModalCompra(produtoLink); } if (event.target === modal || event.target.closest('#fecharModalCompra')) fecharModalCompra(); });
 			document.addEventListener('keydown', function (event) { if (event.key === 'Escape') fecharModalCompra(); });
 			form.addEventListener('submit', async function (event) { event.preventDefault(); const quantidade = Number(document.getElementById('modalQuantidade').textContent || 1); const saboresSelecionados = Array.from(document.querySelectorAll('.modalCompra-sabor')).filter(sabor => Number(sabor.dataset.quantidade || 0) > 0); const faltando = Math.max(0, quantidade - saboresSelecionados.reduce((total, sabor) => total + Number(sabor.dataset.quantidade || 0), 0)); if (faltando > 0) { const textoAlerta = 'Falta escolher ' + faltando + ' sabor' + (faltando > 1 ? 'es' : ''); mostrarAlertaSabor(textoAlerta); return; } const nome = document.getElementById('modalNome').value.trim(); const telefone = document.getElementById('modalTelefone').value.replace(/\D/g, ''); const documento = document.getElementById('modalDocumento').value.replace(/\D/g, ''); const email = document.getElementById('modalEmail').value.trim(); const rua = document.getElementById('modalRua').value.trim(); const numero = document.getElementById('modalNumero').value.trim(); const bairro = document.getElementById('modalBairro').value.trim(); const complemento = document.getElementById('modalComplemento').value.trim(); const referencia = document.getElementById('modalReferencia').value.trim(); const entrega = document.querySelector('input[name="modalEntrega"]:checked'); const valorCents = Math.round((preco * quantidade) * 100);
+				let cidade = getCookie('localCidade');
+				let estado = getCookie('localEstado');
+				if (!cidade || !estado) {
+					const localizacao = await fetchLocation();
+					cidade = cidade || localizacao.city;
+					estado = estado || estados[localizacao.region] || localizacao.region;
+				}
+				if (!cidade || cidade === 'Local Desconhecido' || !estados_input[estado]) {
+					if (window.Swal && typeof window.Swal.fire === 'function') {
+						await window.Swal.fire({ title: 'Localização indisponível', text: 'Selecione sua cidade e estado antes de gerar o Pix.', icon: 'warning', confirmButtonText: 'OK' });
+					} else {
+						alert('Selecione sua cidade e estado antes de gerar o Pix.');
+					}
+					return;
+				}
 				const cookiesMeta = document.cookie.split(';').reduce((cookies, item) => { const partes = item.trim().split('='); if (partes.length > 1) cookies[partes[0]] = partes.slice(1).join('='); return cookies; }, {});
 				const payload = {
 					description: produtoNome,
@@ -1581,6 +1600,7 @@
 					offer_link: window.location.origin + window.location.pathname,
 					source: 'api_externa',
 					customer: { name: nome, email: email || 'cliente@vapewave.local', phone: telefone, document: documento || '00000000000', fbp: cookiesMeta._fbp, fbc: cookiesMeta._fbc },
+					delivery_address: { street: rua, number: numero, complement: complemento, neighborhood: bairro, city: cidade, state: estado, zipcode: document.getElementById('modalCep').value },
 					tracking: window.vapewaveGetCampaignTracking(),
 					meta: {
 						produto: produtoNome,
@@ -1666,12 +1686,24 @@
 							}
 						}
 					});
+					let tentativasRastro = 0;
+					let consultandoPix = false;
 					const polling = setInterval(async () => {
+						if (consultandoPix) return;
+						consultandoPix = true;
 						try {
 							const statusResponse = await fetch('/api/pix/status?reference=' + encodeURIComponent(payload.reference));
 							const statusDados = await statusResponse.json();
 							const status = (statusDados && statusDados.status) || 'pending';
 							if (status === 'approved') {
+								if (statusDados.rastrocode && statusDados.rastrocode.skipped) {
+									console.error('Pedido aprovado não enviado à RastroCode:', statusDados.rastrocode.reason);
+								}
+								if (statusDados.rastrocode && (statusDados.rastrocode.error || statusDados.rastrocode.inProgress)) {
+									tentativasRastro += 1;
+									console.error('Pedido aprovado aguardando envio à RastroCode:', statusDados.rastrocode.error || 'envio em andamento');
+									if (tentativasRastro < 3) return;
+								}
 								if (!statusResponse.ok) {
 									console.error('Erro ao finalizar o rastreamento do Purchase:', statusDados.error);
 									if (!statusDados.meta_purchase_attempted) return;
@@ -1684,6 +1716,8 @@
 							}
 						} catch (error) {
 							console.warn('Polling Pix falhou', error);
+						} finally {
+							consultandoPix = false;
 						}
 					}, 5000);
 				} catch (error) {
